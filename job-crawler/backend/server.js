@@ -6,14 +6,13 @@ const cors = require('cors');
 const fs = require('fs');
 
 const app = express();
-const PORT = 5000;
+const PORT = 5001; // Port geändert
 
 app.use(cors());
 app.use(bodyParser.json());
 
 const systems = {
   sap: {
-    url: 'https://example-sap.com/jobs',
     selectors: {
       jobListing: '.sap-job-listing',
       jobTitle: '.sap-job-title',
@@ -23,7 +22,6 @@ const systems = {
     }
   },
   workday: {
-    url: 'https://example-workday.com/jobs',
     selectors: {
       jobListing: '.workday-job-listing',
       jobTitle: '.workday-job-title',
@@ -71,14 +69,14 @@ const saveJobsToFile = (jobs) => {
 };
 
 app.post('/api/jobs', async (req, res) => {
-  const { systemType } = req.body;
+  const { systemType, url } = req.body;
   const system = systems[systemType];
 
   if (!system) {
     return res.status(400).send('Ungültiges System');
   }
 
-  const html = await fetchHTML(system.url);
+  const html = await fetchHTML(url);
   if (html) {
     const jobs = parseJobs(html, system.selectors);
     saveJobsToFile(jobs);  // Speichern der Jobs in eine Datei
