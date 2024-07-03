@@ -1,72 +1,98 @@
 const express = require('express');
-const axios = require('axios');
-const cheerio = require('cheerio');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const puppeteer = require('puppeteer');
 const fs = require('fs');
 
 const app = express();
-const PORT = 5001; // Port geändert
+const PORT = 5001;
 
 app.use(cors());
 app.use(bodyParser.json());
 
 const systems = {
-  sap: {
-    selectors: {
-      jobListing: '.sap-job-listing',
-      jobTitle: '.sap-job-title',
-      companyName: '.sap-company-name',
-      jobLocation: '.sap-job-location',
-      jobLink: 'a.sap-job-link'
-    }
-  },
   workday: {
     selectors: {
-      jobListing: '.workday-job-listing',
-      jobTitle: '.workday-job-title',
-      companyName: '.workday-company-name',
-      jobLocation: '.workday-job-location',
-      jobLink: 'a.workday-job-link'
+      jobListing: '[data-automation-id="compositeContainer"]', // Selektor für Job-Listings
+      jobId: '[data-automation-id="compositeSubHeaderOne"]',
+      jobName: '[data-automation-id="promptOption"]',
+      jobLink: '[data-automation-id="promptOption"] a'
     }
   }
 };
 
-const fetchHTML = async (url) => {
+const crawlWorkday = async (url, selectors) => {
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
+  console.log(`Navigating to URL: ${url}`);
+  await page.goto(url, { waitUntil: 'networkidle2' });
+
+  // Warten, bis die Job-Listings geladen sind
   try {
-    const { data } = await axios.get(url);
-    return data;
+    await page.waitForSelector(selectors.jobListing, { timeout: 90000 });
+    console.log(`Page loaded`);
   } catch (error) {
-    console.error(`Fehler beim Abrufen der URL: ${url}`, error);
+    console.error(`Error waiting for selector: ${selectors.jobListing}`);
+    const content = await page.content();
+    fs.writeFileSync('page_content.html', content);  // Speichern des HTML-Inhalts der Seite
+    await page.screenshot({ path: 'error_screenshot.png' });
+    await browser.close();
+    throw error;
   }
+
+  // Scrollen, um alle Elemente zu laden
+  await autoScroll(page);
+  console.log(`Scrolled through the page`);
+
+  // Sammle Links zu den Jobanzeigen, Job-IDs und Job-Namen
+  const jobListings = await page.evaluate((selectors) => {
+    const listings = [];
+    const elements = document.querySelectorAll(selectors.jobListing);
+    console.log(`Found ${elements.length} job listing elements`);
+
+    elements.forEach(element => {
+      const jobIdElement = element.querySelector(selectors.jobId);
+      const jobNameElement = element.querySelector(selectors.jobName);
+      const jobLinkElement = element.querySelector(selectors.jobLink);
+      console.log(`Job ID Element: ${jobIdElement ? jobIdElement.innerText : 'not found'}`);
+      console.log(`Job Name Element: ${jobNameElement ? jobNameElement.innerText : 'not found'}`);
+      console.log(`Job Link Element: ${jobLinkElement ? jobLinkElement.href : 'not found'}`);
+
+      if (jobIdElement && jobNameElement && jobLinkElement) {
+        const jobId = jobIdElement.innerText.split('|')[0].trim();
+        const jobName = jobNameElement.innerText;
+        const jobLink = jobLinkElement.href;
+        listings.push({ jobId, jobName, jobLink });
+      }
+    });
+    return listings;
+  }, selectors);
+
+  console.log(`Found job listings: ${JSON.stringify(jobListings, null, 2)}`);
+
+  await browser.close();
+  return jobListings;
 };
 
-const parseJobs = (html, selectors) => {
-  const $ = cheerio.load(html);
-  const jobs = [];
+// Funktion zum automatischen Scrollen der Seite
+async function autoScroll(page) {
+  await page.evaluate(async () => {
+    await new Promise((resolve) => {
+      let totalHeight = 0;
+      const distance = 100;
+      const timer = setInterval(() => {
+        const scrollHeight = document.body.scrollHeight;
+        window.scrollBy(0, distance);
+        totalHeight += distance;
 
-  $(selectors.jobListing).each((index, element) => {
-    const title = $(element).find(selectors.jobTitle).text().trim();
-    const company = $(element).find(selectors.companyName).text().trim();
-    const location = $(element).find(selectors.jobLocation).text().trim();
-    const link = $(element).find(selectors.jobLink).attr('href');
-
-    jobs.push({ title, company, location, link });
+        if (totalHeight >= scrollHeight) {
+          clearInterval(timer);
+          resolve();
+        }
+      }, 100);
+    });
   });
-
-  return jobs;
-};
-
-const saveJobsToFile = (jobs) => {
-  const jsonContent = JSON.stringify(jobs, null, 2);
-  fs.writeFile('jobs.json', jsonContent, 'utf8', (err) => {
-    if (err) {
-      console.error('Fehler beim Speichern der Jobs in Datei', err);
-    } else {
-      console.log('Jobs erfolgreich gespeichert');
-    }
-  });
-};
+}
 
 app.post('/api/jobs', async (req, res) => {
   const { systemType, url } = req.body;
@@ -76,13 +102,17 @@ app.post('/api/jobs', async (req, res) => {
     return res.status(400).send('Ungültiges System');
   }
 
-  const html = await fetchHTML(url);
-  if (html) {
-    const jobs = parseJobs(html, system.selectors);
-    saveJobsToFile(jobs);  // Speichern der Jobs in eine Datei
-    res.json(jobs);
+  if (systemType === 'workday') {
+    console.log(`Starting crawl for Workday URL: ${url}`);
+    try {
+      const jobListings = await crawlWorkday(url, system.selectors);
+      console.log(`Crawled data: ${JSON.stringify(jobListings, null, 2)}`);
+      res.json(jobListings);
+    } catch (error) {
+      res.status(500).send('Fehler beim Abrufen der Job-Listings');
+    }
   } else {
-    res.status(500).send('Fehler beim Abrufen der Jobs');
+    res.status(400).send('Unsupported system type');
   }
 });
 
