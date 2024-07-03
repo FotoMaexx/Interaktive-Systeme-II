@@ -6,7 +6,7 @@ import { saveAs } from 'file-saver';
 import './App.scss';
 
 function App() {
-  const [systemType, setSystemType] = useState('sap');
+  const [systemType, setSystemType] = useState('workday');
   const [url, setUrl] = useState('');
   const [jobs, setJobs] = useState([]);
   const [jsonOutput, setJsonOutput] = useState('');
@@ -73,14 +73,9 @@ function App() {
               <RadioButtonGroup
                 name="systemType"
                 legendText="Wähle ein System"
-                defaultSelected="sap"
+                defaultSelected="workday"
                 onChange={handleSystemChange}
               >
-                {/* <RadioButton
-                  id="sap"
-                  labelText="SAP"
-                  value="sap"
-                /> */}
                 <RadioButton
                   id="workday"
                   labelText="Workday"
@@ -97,20 +92,6 @@ function App() {
           </Row>
         </Grid>
       </form>
-      <Grid>
-        <Row>
-          {jobs.map((job, index) => (
-            <Column key={index} sm={4} md={4} lg={4}>
-              <div className="job-listing">
-                <h2>{job.title}</h2>
-                <p>{job.company}</p>
-                <p>{job.location}</p>
-                <a href={job.link}>Link</a>
-              </div>
-            </Column>
-          ))}
-        </Row>
-      </Grid>
       {jsonOutput && (
         <Grid>
           <Row>

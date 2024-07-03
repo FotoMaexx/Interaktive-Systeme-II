@@ -15,13 +15,13 @@ const systems = {
     selectors: {
       jobListing: '[data-automation-id="compositeContainer"]', // Selektor für Job-Listings
       jobId: '[data-automation-id="compositeSubHeaderOne"]',
-      jobName: '[data-automation-id="promptOption"]',
-      jobLink: '[data-automation-id="promptOption"] a'
-    }
+      jobName: '[data-automation-id="promptOption"]'
+    },
+    baseUrl: 'https://hensoldt.wd3.myworkdayjobs.com/de-DE/External_Career_Site/job/' // Basis-URL für Job-Links
   }
 };
 
-const crawlWorkday = async (url, selectors) => {
+const crawlWorkday = async (url, selectors, baseUrl) => {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   console.log(`Navigating to URL: ${url}`);
@@ -44,34 +44,32 @@ const crawlWorkday = async (url, selectors) => {
   await autoScroll(page);
   console.log(`Scrolled through the page`);
 
-  // Sammle Links zu den Jobanzeigen, Job-IDs und Job-Namen
-  const jobListings = await page.evaluate((selectors) => {
-    const listings = [];
+  // Sammle Job-IDs, Namen und Links
+  const jobs = await page.evaluate((selectors, baseUrl) => {
+    const jobData = [];
     const elements = document.querySelectorAll(selectors.jobListing);
     console.log(`Found ${elements.length} job listing elements`);
 
     elements.forEach(element => {
       const jobIdElement = element.querySelector(selectors.jobId);
       const jobNameElement = element.querySelector(selectors.jobName);
-      const jobLinkElement = element.querySelector(selectors.jobLink);
       console.log(`Job ID Element: ${jobIdElement ? jobIdElement.innerText : 'not found'}`);
       console.log(`Job Name Element: ${jobNameElement ? jobNameElement.innerText : 'not found'}`);
-      console.log(`Job Link Element: ${jobLinkElement ? jobLinkElement.href : 'not found'}`);
 
-      if (jobIdElement && jobNameElement && jobLinkElement) {
+      if (jobIdElement && jobNameElement) {
         const jobId = jobIdElement.innerText.split('|')[0].trim();
-        const jobName = jobNameElement.innerText;
-        const jobLink = jobLinkElement.href;
-        listings.push({ jobId, jobName, jobLink });
+        const jobName = jobNameElement.innerText.trim();
+        const jobLink = `${baseUrl}${jobName.replace(/\s+/g, '-')}_${jobId}`;
+        jobData.push({ jobId, jobName, jobLink });
       }
     });
-    return listings;
-  }, selectors);
+    return jobData;
+  }, selectors, baseUrl);
 
-  console.log(`Found job listings: ${JSON.stringify(jobListings, null, 2)}`);
+  console.log(`Found job data: ${JSON.stringify(jobs, null, 2)}`);
 
   await browser.close();
-  return jobListings;
+  return jobs;
 };
 
 // Funktion zum automatischen Scrollen der Seite
@@ -96,6 +94,12 @@ async function autoScroll(page) {
 
 app.post('/api/jobs', async (req, res) => {
   const { systemType, url } = req.body;
+
+  // Validierung der Anfrage-Daten
+  if (!systemType || !url) {
+    return res.status(400).send('Fehlende systemType oder URL');
+  }
+
   const system = systems[systemType];
 
   if (!system) {
@@ -105,9 +109,9 @@ app.post('/api/jobs', async (req, res) => {
   if (systemType === 'workday') {
     console.log(`Starting crawl for Workday URL: ${url}`);
     try {
-      const jobListings = await crawlWorkday(url, system.selectors);
-      console.log(`Crawled data: ${JSON.stringify(jobListings, null, 2)}`);
-      res.json(jobListings);
+      const jobs = await crawlWorkday(url, system.selectors, system.baseUrl);
+      console.log(`Crawled data: ${JSON.stringify(jobs, null, 2)}`);
+      res.json(jobs);
     } catch (error) {
       res.status(500).send('Fehler beim Abrufen der Job-Listings');
     }
