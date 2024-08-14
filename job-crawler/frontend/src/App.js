@@ -61,7 +61,7 @@ function App() {
               <TextInput
                 id="url-input"
                 labelText="Job URL"
-                placeholder="https://example.com/jobs"
+                 placeholder="https://example.com/jobs"
                 value={url}
                 onChange={handleUrlChange}
                 required
@@ -80,6 +80,24 @@ function App() {
                   id="workday"
                   labelText="Workday"
                   value="workday"
+                />
+                <RadioButton
+                  id="sap"
+                  labelText="SAP"
+                  value="sap"
+                  disabled
+                />
+                <RadioButton
+                  id="oracle"
+                  labelText="Oracle"
+                  value="oracle"
+                  disabled
+                />
+                <RadioButton
+                  id="icims"
+                  labelText="iCIMS"
+                  value="icims"
+                  disabled
                 />
                 {/* Füge weitere Optionen für andere Systeme hinzu */}
               </RadioButtonGroup>
