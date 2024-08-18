@@ -18,7 +18,12 @@
         }
         .question { 
             margin-bottom: 20px; 
+            color: black;
             display: none; /* Fragen standardmäßig ausblenden */
+        }
+        
+        .question:first-of-type {
+        display: block; /* Die erste Frage anzeigen */
         }
         .scale {
             display: flex;
@@ -40,29 +45,29 @@
         <h1>Finden Sie Ihren passenden Job</h1>
         <form id="job-form">
             <div id="question1" class="question">
-                <h2>Wie interessiert sind Sie an Softwareentwicklung?</h2>
+                <h2> Wie sind Ihre SAP and MS Office Kenntnisse ?</h2>
                 <div class="scale">
                     <label>
-                        <input type="radio" name="question1" value="1" required> Kein Interesse
+                        <input type="radio" name="question1" value="1" required> Keine Kenntnisse vorhanden
                     </label>
                     <label>
-                        <input type="radio" name="question1" value="2">
+                        <input type="radio" name="question1" value="2"> Schlecht
                     </label>
                     <label>
-                        <input type="radio" name="question1" value="3">
+                        <input type="radio" name="question1" value="3"> Etwas
                     </label>
                     <label>
-                        <input type="radio" name="question1" value="4">
+                        <input type="radio" name="question1" value="4"> Gut
                     </label>
                     <label>
-                        <input type="radio" name="question1" value="5"> Starkes Interesse
+                        <input type="radio" name="question1" value="5"> Sehr gut
                     </label>
                 </div>
                 <button type="button" id="next1">Weiter</button>
             </div>
 
             <div id="question2" class="question">
-                <h2>Wie interessiert sind Sie an Datenanalyse?</h2>
+                <h2>Berechnungen und Berichte auf Fehler kontrollieren</h2>
                 <div class="scale">
                     <label>
                         <input type="radio" name="question2" value="1" required> Kein Interesse
@@ -71,13 +76,13 @@
                         <input type="radio" name="question2" value="2">
                     </label>
                     <label>
-                        <input type="radio" name="question2" value="3">
+                        <input type="radio" name="question2" value="3"> Neutral
                     </label>
                     <label>
-                        <input type="radio" name="question2" value="4">
+                        <input type="radio" name="question2" value="4"> 
                     </label>
                     <label>
-                        <input type="radio" name="question2" value="5"> Starkes Interesse
+                        <input type="radio" name="question2" value="5"> Sehr starkes Interesse
                     </label>
                 </div>
                 <button type="button" id="prev1">Zurück</button>
@@ -85,7 +90,7 @@
             </div>
 
             <div id="question3" class="question">
-                <h2>Wie interessiert sind Sie an Projektmanagement?</h2>
+                <h2>Artikel und Beiträge für Medien (z.B. Social Media) verfassen</h2>
                 <div class="scale">
                     <label>
                         <input type="radio" name="question3" value="1" required> Kein Interesse
@@ -94,17 +99,201 @@
                         <input type="radio" name="question3" value="2">
                     </label>
                     <label>
-                        <input type="radio" name="question3" value="3">
+                        <input type="radio" name="question3" value="3"> Neutral
                     </label>
                     <label>
                         <input type="radio" name="question3" value="4">
                     </label>
                     <label>
-                        <input type="radio" name="question3" value="5"> Starkes Interesse
+                        <input type="radio" name="question3" value="5"> Sehr starkes Interesse
                     </label>
                 </div>
                 <button type="button" id="prev2">Zurück</button>
-                <button type="button" id="submit">Fertigstellen</button>
+                <button type="button" id="next3">Weiter</button>
+            </div>
+
+            <div id="question4" class="question">
+                <h2>Probleme durch wissenschaftliche Untersuchungen analysieren</h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question4" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question4" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question4" value="3"> Neutral
+                    </label>
+                    <label>
+                        <input type="radio" name="question4" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question4" value="5"> Sehr starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev3">Zurück</button>
+                <button type="button" id="next4">Weiter</button>
+            </div>
+
+            <div id="question5" class="question">
+                <h2>Sind sie bereit für die Übernahme der Verantwortung für Arbeitspakete im übertragenen Arbeitsumfeld?</h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question5" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question5" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question5" value="3"> Neutral
+                    </label>
+                    <label>
+                        <input type="radio" name="question5" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question5" value="5"> Sehr starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev4">Zurück</button>
+                <button type="button" id="next5">Weiter</button>
+            </div>
+
+            <div id="question6" class="question">
+                <h2>Interessieren Sie sich für das Backend-Development (Service-orientiert, DDS-, TCP / UDP- und Client-Server)?</h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question6" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question6" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question6" value="3"> Neutral
+                    </label>
+                    <label>
+                        <input type="radio" name="question6" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question6" value="5"> Sehr starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev5">Zurück</button>
+                <button type="button" id="next6">Weiter</button>
+            </div>
+
+            <div id="question7" class="question">
+                <h2>Sicherstellung einer konsistenten Kommunikation der Strategie zwischen internen und externen Stakeholdern </h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question7" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question7" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question7" value="3"> Neutral
+                    </label>
+                    <label>
+                        <input type="radio" name="question7" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question7" value="5"> Sehr starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev6">Zurück</button>
+                <button type="button" id="next7">Weiter</button>
+            </div>
+
+            <div id="question8" class="question">
+                <h2>Besitzen Sie Projektmanagementfähigkeiten in funktionsübergreifenden Projekten? </h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question8" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question8" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question8" value="3"> Neutral
+                    </label>
+                    <label>
+                        <input type="radio" name="question8" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question8" value="5"> Sehr starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev7">Zurück</button>
+                <button type="button" id="next8">Weiter</button>
+            </div>
+
+            <div id="question9" class="question">
+                <h2>Besitzen Sie qusgeprägte Kommunikationsfähigkeiten? </h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question9" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question9" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question9" value="3"> Neutral
+                    </label>
+                    <label>
+                        <input type="radio" name="question9" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question9" value="5"> Sehr starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev8">Zurück</button>
+                <button type="button" id="next9">Weiter</button>
+            </div>
+
+            <div id="question10" class="question">
+                <h2>Haben Sie Interesse an der Entwicklung von Produktlebenszyklen sowie Service- und Logistikkonzepte? </h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question10" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question10" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question10" value="3"> Neutral
+                    </label>
+                    <label>
+                        <input type="radio" name="question10" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question10" value="5"> Sehr starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev9">Zurück</button>
+                <button type="button" id="next10">Weiter</button>
+            </div>
+
+            <div id="question11" class="question">
+                <h2>Haben Sie Interesse an der Durchführung von Präsentationen innerhalb/außerhalb  Hensoldt und sowie Erstellung von Reports? </h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question11" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question11" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question11" value="3"> Neutral
+                    </label>
+                    <label>
+                        <input type="radio" name="question11" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question11" value="5"> Sehr starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev10">Zurück</button>
+                <button type="button" id="submit">Ergebnisse evaluieren</button>
             </div>
 
             <div id="results" class="question">
@@ -117,87 +306,7 @@
         </form>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let currentQuestionIndex = 1;
-
-            const questions = document.querySelectorAll('.question');
-            const showQuestion = (index) => {
-                questions.forEach((q, i) => q.style.display = (i + 1 === index) ? 'block' : 'none');
-            };
-
-            const calculateResults = () => {
-                const answers = {
-                    question1: parseInt(document.querySelector('input[name="question1"]:checked')?.value) || 0,
-                    question2: parseInt(document.querySelector('input[name="question2"]:checked')?.value) || 0,
-                    question3: parseInt(document.querySelector('input[name="question3"]:checked')?.value) || 0
-                };
-
-                const jobs = [
-                    { title: 'Softwareentwickler', requirements: { question1: 5, question2: 2, question3: 2 } },
-                    { title: 'Datenanalyst', requirements: { question1: 2, question2: 5, question3: 3 } },
-                    { title: 'Projektmanager', requirements: { question1: 3, question2: 3, question3: 5 } }
-                ];
-
-                const jobScores = jobs.map(job => {
-                    let score = 0;
-                    for (const question in job.requirements) {
-                        score += Math.abs(job.requirements[question] - answers[question]);
-                    }
-                    return { job: job.title, score: score };
-                });
-
-                jobScores.sort((a, b) => a.score - b.score);
-
-                return jobScores.map(jobScore => `<p>${jobScore.job}</p>`).join('');
-            };
-
-            document.getElementById('next1').addEventListener('click', () => {
-                if (document.querySelector('input[name="question1"]:checked')) {
-                    currentQuestionIndex = 2;
-                    showQuestion(currentQuestionIndex);
-                } else {
-                    alert('Bitte beantworten Sie alle Fragen.');
-                }
-            });
-
-            document.getElementById('prev1').addEventListener('click', () => {
-                currentQuestionIndex = 1;
-                showQuestion(currentQuestionIndex);
-            });
-
-            document.getElementById('next2').addEventListener('click', () => {
-                if (document.querySelector('input[name="question2"]:checked')) {
-                    currentQuestionIndex = 3;
-                    showQuestion(currentQuestionIndex);
-                } else {
-                    alert('Bitte beantworten Sie alle Fragen.');
-                }
-            });
-
-            document.getElementById('prev2').addEventListener('click', () => {
-                currentQuestionIndex = 2;
-                showQuestion(currentQuestionIndex);
-            });
-
-            document.getElementById('submit').addEventListener('click', () => {
-                if (document.querySelector('input[name="question3"]:checked')) {
-                    document.getElementById('results-content').innerHTML = calculateResults();
-                    currentQuestionIndex = 4;
-                    showQuestion(currentQuestionIndex);
-                } else {
-                    alert('Bitte beantworten Sie alle Fragen.');
-                }
-            });
-
-            document.getElementById('restart').addEventListener('click', () => {
-                currentQuestionIndex = 1;
-                showQuestion(currentQuestionIndex);
-                document.getElementById('job-form').reset();
-            });
-
-            showQuestion(currentQuestionIndex); // Startseite anzeigen
-        });
-    </script>
+    <!-- Einbindung der externen JavaScript-Datei -->
+    <script src="script.js"></script>
 </body>
 </html>
