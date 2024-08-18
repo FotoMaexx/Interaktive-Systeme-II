@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job-Matching</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            color: black;
+            margin: 0;
+            padding: 0;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: auto; 
+            padding: 20px; 
+        }
+        .question { 
+            margin-bottom: 20px; 
+            display: none; /* Fragen standardmäßig ausblenden */
+        }
+        .scale {
+            display: flex;
+            justify-content: space-between;
+        }
+        .scale label {
+            margin-right: 10px;
+            flex-grow: 1;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Finden Sie Ihren passenden Job</h1>
+        <form id="job-form">
+            <div id="question1" class="question">
+                <h2>Wie interessiert sind Sie an Softwareentwicklung?</h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question1" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question1" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question1" value="3">
+                    </label>
+                    <label>
+                        <input type="radio" name="question1" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question1" value="5"> Starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="next1">Weiter</button>
+            </div>
+
+            <div id="question2" class="question">
+                <h2>Wie interessiert sind Sie an Datenanalyse?</h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question2" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question2" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question2" value="3">
+                    </label>
+                    <label>
+                        <input type="radio" name="question2" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question2" value="5"> Starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev1">Zurück</button>
+                <button type="button" id="next2">Weiter</button>
+            </div>
+
+            <div id="question3" class="question">
+                <h2>Wie interessiert sind Sie an Projektmanagement?</h2>
+                <div class="scale">
+                    <label>
+                        <input type="radio" name="question3" value="1" required> Kein Interesse
+                    </label>
+                    <label>
+                        <input type="radio" name="question3" value="2">
+                    </label>
+                    <label>
+                        <input type="radio" name="question3" value="3">
+                    </label>
+                    <label>
+                        <input type="radio" name="question3" value="4">
+                    </label>
+                    <label>
+                        <input type="radio" name="question3" value="5"> Starkes Interesse
+                    </label>
+                </div>
+                <button type="button" id="prev2">Zurück</button>
+                <button type="button" id="submit">Fertigstellen</button>
+            </div>
+
+            <div id="results" class="question">
+                <h2>Ihre Ergebnisse</h2>
+                <div id="results-content">
+                    <!-- Ergebnisse werden hier angezeigt -->
+                </div>
+                <button type="button" id="restart">Nochmal starten</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentQuestionIndex = 1;
+
+            const questions = document.querySelectorAll('.question');
+            const showQuestion = (index) => {
+                questions.forEach((q, i) => q.style.display = (i + 1 === index) ? 'block' : 'none');
+            };
+
+            const calculateResults = () => {
+                const answers = {
+                    question1: parseInt(document.querySelector('input[name="question1"]:checked')?.value) || 0,
+                    question2: parseInt(document.querySelector('input[name="question2"]:checked')?.value) || 0,
+                    question3: parseInt(document.querySelector('input[name="question3"]:checked')?.value) || 0
+                };
+
+                const jobs = [
+                    { title: 'Softwareentwickler', requirements: { question1: 5, question2: 2, question3: 2 } },
+                    { title: 'Datenanalyst', requirements: { question1: 2, question2: 5, question3: 3 } },
+                    { title: 'Projektmanager', requirements: { question1: 3, question2: 3, question3: 5 } }
+                ];
+
+                const jobScores = jobs.map(job => {
+                    let score = 0;
+                    for (const question in job.requirements) {
+                        score += Math.abs(job.requirements[question] - answers[question]);
+                    }
+                    return { job: job.title, score: score };
+                });
+
+                jobScores.sort((a, b) => a.score - b.score);
+
+                return jobScores.map(jobScore => `<p>${jobScore.job}</p>`).join('');
+            };
+
+            document.getElementById('next1').addEventListener('click', () => {
+                if (document.querySelector('input[name="question1"]:checked')) {
+                    currentQuestionIndex = 2;
+                    showQuestion(currentQuestionIndex);
+                } else {
+                    alert('Bitte beantworten Sie alle Fragen.');
+                }
+            });
+
+            document.getElementById('prev1').addEventListener('click', () => {
+                currentQuestionIndex = 1;
+                showQuestion(currentQuestionIndex);
+            });
+
+            document.getElementById('next2').addEventListener('click', () => {
+                if (document.querySelector('input[name="question2"]:checked')) {
+                    currentQuestionIndex = 3;
+                    showQuestion(currentQuestionIndex);
+                } else {
+                    alert('Bitte beantworten Sie alle Fragen.');
+                }
+            });
+
+            document.getElementById('prev2').addEventListener('click', () => {
+                currentQuestionIndex = 2;
+                showQuestion(currentQuestionIndex);
+            });
+
+            document.getElementById('submit').addEventListener('click', () => {
+                if (document.querySelector('input[name="question3"]:checked')) {
+                    document.getElementById('results-content').innerHTML = calculateResults();
+                    currentQuestionIndex = 4;
+                    showQuestion(currentQuestionIndex);
+                } else {
+                    alert('Bitte beantworten Sie alle Fragen.');
+                }
+            });
+
+            document.getElementById('restart').addEventListener('click', () => {
+                currentQuestionIndex = 1;
+                showQuestion(currentQuestionIndex);
+                document.getElementById('job-form').reset();
+            });
+
+            showQuestion(currentQuestionIndex); // Startseite anzeigen
+        });
+    </script>
+</body>
+</html>
