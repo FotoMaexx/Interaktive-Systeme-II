@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         questions.forEach((q, i) => q.style.display = (i + 1 === index) ? 'block' : 'none');
     };
 
-    // Funktion zum Berechnen der Ergebnisse
+    // Simple Match Algorithmus
     const calculateResults = () => {
         const answers = {
             question1: parseInt(document.querySelector('input[name="question1"]:checked')?.value) || 0,
@@ -25,9 +25,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         const jobs = [
-            { title: 'Sub-project manager', requirements: { question1: 5, question2: 2, question3: 2, question4: 2, question5: 2, question6: 1, question7: 1, question8: 3, question9: 3, question10: 1, question11: 1 } },
-            { title: 'Test technican ', requirements: { question1: 2, question2: 5, question3: 3, question4: 2, question5: 2, question6: 1, question7: 1, question8: 3, question9: 3, question10: 1, question11: 1 } },
-            { title: 'Projektleiter*in Aircraft', requirements: { question1: 3, question2: 3, question3: 5, question4: 2, question5: 2, question6: 1, question7: 1, question8: 3, question9: 3, question10: 1, question11: 1 } }
+            { title: 'Architekt', requirements: { question1: 5, question2: 5, question3: 5, question4: 0, question5: 0, question6: 0, question7: 0, question8: 0, question9: 0, question10: 0, question11: 0 } },
+            { title: 'Lehrer', requirements: { question1: 0, question2: 0, question3: 0, question4: 5, question5: 5, question6: 5, question7: 0, question8: 0, question9: 0, question10: 0, question11: 0 } },
+            { title: 'Arzt', requirements: { question1: 0, question2: 0, question3: 0, question4: 0, question5: 0, question6: 0, question7: 5, question8: 5, question9: 5, question10: 5, question11: 5 } }
         ];
 
         const maxScore = 55; // Maximale mögliche Punktzahl (5 * Anzahl der Fragen)
