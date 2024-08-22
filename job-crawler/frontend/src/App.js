@@ -88,15 +88,9 @@ function App() {
                   disabled
                 />
                 <RadioButton
-                  id="oracle"
-                  labelText="Oracle"
-                  value="oracle"
-                  disabled
-                />
-                <RadioButton
-                  id="icims"
-                  labelText="iCIMS"
-                  value="icims"
+                  id="personio"
+                  labelText="Personio"
+                  value="personio"
                   disabled
                 />
                 {/* Füge weitere Optionen für andere Systeme hinzu */}

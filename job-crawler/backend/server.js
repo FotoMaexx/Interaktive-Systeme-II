@@ -3,8 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { fetchWorkdayJobs } from './fetch_workday_jobs.js';
 // import { fetchSapJobs } from './fetch_sap_jobs.js';
-// import { fetchOracleJobs } from './fetch_oracle_jobs.js';
-// import { fetchIcimsJobs } from './fetch_icims_jobs.js';
+// import { fetchPersonioJobs } from './fetch_personio_jobs.js';
 
 const app = express();
 const PORT = 5001;
