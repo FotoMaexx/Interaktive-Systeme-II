@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import { fetchWorkdayJobs } from './fetch_workday_jobs.js';
 // import { fetchSapJobs } from './fetch_sap_jobs.js';
-// import { fetchPersonioJobs } from './fetch_personio_jobs.js';
+import { fetchPersonioJobs } from './fetch_personio_jobs.js';
 
 const app = express();
 const PORT = 5001;
@@ -30,9 +30,9 @@ app.post('/api/jobs', async (req, res) => {
         console.log(`Starting crawl for SAP URL: ${url}`);
         jobs = await fetchSapJobs(url);
         break;
-      case 'oracle':
-        console.log(`Starting crawl for Oracle URL: ${url}`);
-        jobs = await fetchOracleJobs(url);
+      case 'personio':  // Hier wurde der 'systemType' für Personio korrigiert
+        console.log(`Starting crawl for Personio URL: ${url}`);
+        jobs = await fetchPersonioJobs(url);
         break;
       case 'icims':
         console.log(`Starting crawl for iCIMS URL: ${url}`);
@@ -44,6 +44,7 @@ app.post('/api/jobs', async (req, res) => {
     console.log(`Crawled data: ${JSON.stringify(jobs, null, 2)}`);
     res.json(jobs);
   } catch (error) {
+    console.error(`Error during crawling: ${error.message}`);
     res.status(500).send('Fehler beim Abrufen der Job-Listings');
   }
 });
