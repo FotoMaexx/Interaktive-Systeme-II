@@ -1,19 +1,17 @@
 import puppeteer from 'puppeteer';
+import fs from 'fs';
 
-// JSON-Daten
-const jobData = [
-  {
-    "title": "Systemingenieur*in für Land Periskope & Beobachtungssysteme (w/m/d)",
-    "jobId": "JR-14563",
-    "link": "https://hensoldt.wd3.myworkdayjobs.com/de-DE/External_Career_Site/job/Oberkochen/Systemingenieur-in-fr-Land-Periskope---Beobachtungssysteme--w-m-d-_JR-14563-1"
-  },
-  {
-    "title": "Manager Industrial Participation / Offset (w/m/d)",
-    "jobId": "JR-14108",
-    "link": "https://hensoldt.wd3.myworkdayjobs.com/de-DE/External_Career_Site/job/Ulm/Manager-Industrial-Participation---Offset--w-m-d-_JR-14108"
-  },
-  // Weitere Einträge...
-];
+// Funktion zum Einlesen des JSON-Files
+function readJsonFile(filePath) {
+  const rawData = fs.readFileSync(filePath);
+  return JSON.parse(rawData);
+}
+
+// Funktion zum Speichern des JSON-Files
+function writeJsonFile(filePath, data) {
+  const jsonData = JSON.stringify(data, null, 2); // Pretty print with 2-space indentation
+  fs.writeFileSync(filePath, jsonData, 'utf8');
+}
 
 // Funktion zum Abrufen und Erweitern der JSON-Daten mit der Job-Beschreibung
 async function fetchAndExtendDescription(job) {
@@ -65,5 +63,22 @@ async function fetchAndExtendDescription(job) {
   }
 }
 
-// Erweitere den ersten Job in den JSON-Daten
-fetchAndExtendDescription(jobData[0]);
+// Hauptfunktion zum Einlesen, Bearbeiten und Speichern des JSON-Files
+async function processJsonFile(inputFilePath, outputFilePath) {
+  const jobData = readJsonFile(inputFilePath);
+
+  // Durchlaufe alle Jobs im JSON und erweitere sie mit der Beschreibung
+  for (let job of jobData) {
+    await fetchAndExtendDescription(job);
+  }
+
+  // Speichere das erweiterte JSON in einer Datei
+  writeJsonFile(outputFilePath, jobData);
+}
+
+// Pfade zu den JSON-Dateien
+const inputFilePath = '/Users/maximilianhauser/Desktop/Uni/8.Semester/IntSys2/UE/job-crawler/backend/TestJSON.json';
+const outputFilePath = '/Users/maximilianhauser/Desktop/Uni/8.Semester/IntSys2/UE/job-crawler/backend/TestJSON_Descr.json';
+
+// Starte die Verarbeitung des JSON-Files
+processJsonFile(inputFilePath, outputFilePath);
