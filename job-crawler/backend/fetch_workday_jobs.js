@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
+import { fetchAndExtendDescription } from './descriptionFetch.js';
 
 // Die Header für die Anfrage
 const headers = {
@@ -32,29 +33,36 @@ const fetchData = async (url) => {
 
 // Funktion zum Abrufen der Jobs
 export const fetchWorkdayJobs = async (baseUrl) => {
+    console.log('Starte fetchWorkdayJobs'); // Startpunkt
+
     const external = "/External_Career_Site";
     const paginationPath = "/searchPagination/318c8bb6f553100021d223d9780d30be";
     let allJobData = [];
 
-    // Grundseite laden
     const mainUrl = `${baseUrl}${external}/5/refreshFacet/318c8bb6f553100021d223d9780d30be?clientRequestID=a0a1fd44e5de4d4da35b50143b3e5b67`;
 
-    // Schleife zum Abrufen aller Daten von allen möglichen Ordnern
     try {
-        // Hauptseite zuerst laden
+        console.log('Rufe Hauptseite auf:', mainUrl); // Debug-Log
         const mainData = await fetchData(mainUrl);
+        console.log('Hauptseite geladen, Daten:', mainData); // Debug-Log
+
         let jobList = mainData.body.children[0].children[0].listItems;
         allJobData = allJobData.concat(jobList);
+        console.log('Erste Jobdaten erhalten:', jobList); // Debug-Log
 
-        // Überprüfen aller möglichen Seiten von 1 bis 99
         for (let i = 1; i < 100; i++) {
             const offset = i * 50;
             const url = `${baseUrl}${external}/${i}${paginationPath}/${offset}?clientRequestID=${Math.random().toString(36).substring(2, 15)}`;
+            console.log('Rufe Seite auf:', url); // Debug-Log
+
             try {
                 const data = await fetchData(url);
+                console.log(`Seite ${i} geladen, Daten:`, data); // Debug-Log
+
                 jobList = data.body.children[0].children[0].listItems;
                 if (jobList.length === 0) {
-                    break; // Beenden, wenn keine Daten mehr vorhanden sind
+                    console.log('Keine weiteren Jobdaten, breche ab.'); // Debug-Log
+                    break;
                 }
                 allJobData = allJobData.concat(jobList);
             } catch (error) {
@@ -63,18 +71,26 @@ export const fetchWorkdayJobs = async (baseUrl) => {
             }
         }
 
-        // Daten in eine Datei schreiben (optional)
-        fs.writeFileSync('all_job_data.json', JSON.stringify(allJobData, null, 2));
-        console.log('Alle Daten erfolgreich gespeichert!');
-
-        // Jobinformationen extrahieren und zurückgeben
-        const jobDetails = allJobData.map(job => {
+        console.log('Alle Seiten abgearbeitet, starte Verarbeitung der Jobdetails.'); // Debug-Log
+        const jobDetails = [];
+        for (const job of allJobData) {
             const title = job.title.instances[0].text;
             const jobId = job.subtitles[0].instances[0].text;
             const link = `${baseUrl}${job.title.commandLink}`;
+            let jobDetail = { title, jobId, link };
 
-            return { title, jobId, link };
-        });
+            console.log(`Verarbeite Job: ${title}`); // Debug-Log
+
+            try {
+                await fetchAndExtendDescription(jobDetail);
+            } catch (error) {
+                console.error('Fehler beim Abrufen der Jobbeschreibung:', error);
+            }
+
+            jobDetails.push(jobDetail);
+        }
+
+        console.log('Jobdetails komplett:', jobDetails); // Debug-Log
 
         return jobDetails;
     } catch (error) {
