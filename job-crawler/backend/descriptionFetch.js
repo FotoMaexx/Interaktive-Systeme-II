@@ -27,10 +27,27 @@ async function fetchAndExtendDescription(job) {
     // 10 Sekunden warten, um sicherzustellen, dass die Seite vollständig geladen ist
     await new Promise(r => setTimeout(r, 10000)); // Verzögerung einfügen
 
-    // HTML analysieren und das Ziel-DIV extrahieren
+    // HTML analysieren und den gewünschten Text extrahieren
     const jobDescription = await page.evaluate(() => {
       const descriptionElement = document.querySelector('div[data-automation-id="jobPostingDescription"]');
-      return descriptionElement ? descriptionElement.innerHTML : null;
+      if (!descriptionElement) return null;
+
+      // Text extrahieren und formatieren
+      let text = descriptionElement.innerText || "";
+      
+      // Abschnitte isolieren
+      const sections = ['Über den Bereich', 'Ihre Aufgaben', 'Ihr Profil'];
+      let relevantText = '';
+
+      sections.forEach(section => {
+        const regex = new RegExp(section + '.*?(?=(Über den Bereich|Ihre Aufgaben|Ihr Profil|$))', 's');
+        const match = text.match(regex);
+        if (match && match[0]) {
+          relevantText += match[0].trim() + '\n\n';
+        }
+      });
+
+      return relevantText.trim();
     });
 
     // Beschreibung zum JSON-Objekt hinzufügen
