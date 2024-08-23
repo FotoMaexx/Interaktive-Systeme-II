@@ -15,19 +15,31 @@ export async function fetchAndExtendDescription(job) {
         // Warten, um sicherzustellen, dass alle Inhalte geladen sind
         await new Promise(r => setTimeout(r, 3000));
 
-        // Extrahieren der Jobbeschreibung
+        // Extrahieren der Jobbeschreibung ohne den "Über uns" und "Kontakt"-Teil
         const jobDescription = await page.evaluate(() => {
             const descriptionElement = document.querySelector('.description-wrapper');
             if (!descriptionElement) return null;
 
             let text = descriptionElement.innerText || "";
 
+            // Entfernen des "Über uns"-Teils
+            const overUsIndex = text.indexOf('Über uns');
+            if (overUsIndex !== -1) {
+                text = text.substring(0, overUsIndex).trim();
+            }
+
+            // Entfernen des "Kontakt"-Teils
+            const contactIndex = text.indexOf('Kontakt');
+            if (contactIndex !== -1) {
+                text = text.substring(0, contactIndex).trim();
+            }
+
             // Abschnitte, die extrahiert werden sollen
-            const sections = ['Ihre Aufgaben', 'Ihr Profil', 'Ihre Vorteile', 'Über uns'];
+            const sections = ['Ihre Aufgaben', 'Ihr Profil', 'Ihre Vorteile'];
             let relevantText = '';
 
             sections.forEach(section => {
-                const regex = new RegExp(section + '.*?(?=(Ihre Aufgaben|Ihr Profil|Ihre Vorteile|Über uns|Kontakt|$))', 's');
+                const regex = new RegExp(section + '.*?(?=(Ihre Aufgaben|Ihr Profil|Ihre Vorteile|$))', 's');
                 const match = text.match(regex);
                 if (match && match[0]) {
                     relevantText += match[0].trim() + '\n\n';
