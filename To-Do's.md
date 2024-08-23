@@ -9,6 +9,7 @@ To-Do Liste für den Job Crawler
 - [ ] Test Umfrage in React App einbauen
 - [ ] Backend programmieren
 - [ ] CI Anpassungsfunktionen einbauen
+- [ ] Personio Formating anpassen
   <!-- - [ ] Sub-task or description   -->
 
 ### In Progress
