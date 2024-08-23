@@ -20,17 +20,29 @@ export const fetchPersonioJobs = async (url) => {
         return html;
     };
 
+    // Funktion zum Entfernen von Sprachparametern aus der URL
+    const removeLanguageParam = (link) => {
+        const urlObj = new URL(link);
+        urlObj.searchParams.delete('language'); // Sprachparameter entfernen
+        return urlObj.href;
+    };
+
     // Funktion zum Extrahieren der Jobs aus dem HTML
     const extractJobs = (html) => {
         const $ = load(html);
         const jobs = [];
 
         $('a.job-box-link').each((index, element) => {
+            const title = $(element).find('.jb-title').text().trim();
+            const jobId = $(element).attr('data-job-position-id');
+            const relativeLink = $(element).attr('href').trim();
+            let link = new URL(relativeLink, url).href; // Vollständige URL erstellen
+            link = removeLanguageParam(link); // Sprachparameter entfernen
+
             const job = {
-                title: $(element).find('.jb-title').text().trim(),
-                location: $(element).find('.multi-offices-desktop strong').text().trim(),
-                type: $(element).find('.jb-description span').first().text().trim(),
-                link: $(element).attr('href').trim(),
+                title,
+                jobId,
+                link,
             };
 
             jobs.push(job);

@@ -30,7 +30,7 @@ app.post('/api/jobs', async (req, res) => {
         console.log(`Starting crawl for SAP URL: ${url}`);
         jobs = await fetchSapJobs(url);
         break;
-      case 'personio':  // Hier wurde der 'systemType' für Personio korrigiert
+      case 'personio':
         console.log(`Starting crawl for Personio URL: ${url}`);
         jobs = await fetchPersonioJobs(url);
         break;
