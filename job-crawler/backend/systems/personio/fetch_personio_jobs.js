@@ -3,7 +3,6 @@ import { load } from 'cheerio';
 import { fetchAndExtendDescription } from './personioDescriptionFetch.js';
 
 export const fetchPersonioJobs = async (url) => {
-    // Funktion zum Abrufen der HTML-Seite
     const fetchHtml = async (url) => {
         const response = await fetch(url, {
             method: 'GET',
@@ -21,17 +20,15 @@ export const fetchPersonioJobs = async (url) => {
         return html;
     };
 
-    // Funktion zum Entfernen von Sprachparametern aus der URL
     const removeLanguageParam = (link) => {
         const urlObj = new URL(link);
         urlObj.searchParams.delete('language'); // Sprachparameter entfernen
         return urlObj.href;
     };
 
-    // Funktion zum Extrahieren der Jobs aus dem HTML
     const extractJobs = (html) => {
         const $ = load(html);
-        const jobs = [];
+        const jobs = new Map(); // Verwende eine Map, um Duplikate zu vermeiden
 
         $('a.job-box-link').each((index, element) => {
             const title = $(element).find('.jb-title').text().trim();
@@ -40,19 +37,19 @@ export const fetchPersonioJobs = async (url) => {
             let link = new URL(relativeLink, url).href; // Vollständige URL erstellen
             link = removeLanguageParam(link); // Sprachparameter entfernen
 
-            const job = {
-                title,
-                jobId,
-                link,
-            };
-
-            jobs.push(job);
+            // Überprüfe, ob der Job bereits existiert (vermeidet Duplikate)
+            if (!jobs.has(jobId)) {
+                jobs.set(jobId, {
+                    title,
+                    jobId,
+                    link,
+                });
+            }
         });
 
-        return jobs;
+        return Array.from(jobs.values()); // Konvertiere die Map zurück in ein Array
     };
 
-    // Hauptlogik zum Abrufen, Extrahieren der Jobdaten und Hinzufügen der Beschreibungen
     try {
         console.log('Rufe HTML-Seite ab:', url);
         const html = await fetchHtml(url);
@@ -61,7 +58,6 @@ export const fetchPersonioJobs = async (url) => {
         const jobs = extractJobs(html);
         console.log('Jobs erfolgreich extrahiert:', jobs);
 
-        // Erweiterung der Jobdetails um die Beschreibung
         for (const job of jobs) {
             console.log(`Erweitere Jobbeschreibung für: ${job.title}`);
             try {

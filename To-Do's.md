@@ -13,7 +13,6 @@ To-Do Liste für den Job Crawler
 
 ### In Progress
 
-- [ ] Job Crawler für Personio mit Job Descriptions
 - [ ] Job Crawler für SAP mit Job Descriptions
 - [ ] Mathing Algorithmus
 - [ ] KI Trainingsdaten erstellen
@@ -21,3 +20,5 @@ To-Do Liste für den Job Crawler
 ### Done ✓
 
 - [x] Job Crawler für Workday mit Job Descriptions
+- [x] Job Crawler für Personio mit Job Descriptions
+  - [x] FIX: Crawler gibt 3x die gleichen Jobs aus
