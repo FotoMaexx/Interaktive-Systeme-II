@@ -81,11 +81,11 @@ function App() {
                     Wähle ein System <br /><br />
                     Beispiellinks:<br />
                     Workday: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://hensoldt.wd3.myworkdayjobs.com')}>https://hensoldt.wd3.myworkdayjobs.com</a><br />
-                    SAP:<br />
+                    SAP: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://careers.kaercher.com/')}>https://careers.kaercher.com/</a><br />
                     Personio: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://liqui-moly-gmbh.jobs.personio.com')}>https://liqui-moly-gmbh.jobs.personio.com</a>
                   </>
                 }
-                defaultSelected="personio"
+                defaultSelected="sap"
                 onChange={handleSystemChange}
               >
                 <RadioButton
@@ -97,7 +97,7 @@ function App() {
                   id="sap"
                   labelText="SAP"
                   value="sap"
-                  disabled
+                  // disabled
                 />
                 <RadioButton
                   id="personio"
