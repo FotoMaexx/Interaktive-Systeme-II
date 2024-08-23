@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
-import { fetchAndExtendDescription } from './descriptionFetch.js';
+import { fetchAndExtendDescription } from './workdayDescriptionFetch.js';
 
 // Die Header für die Anfrage
 const headers = {
