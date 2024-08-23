@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { fetchWorkdayJobs } from './systems/workday/fetch_workday_jobs.js';
-// import { fetchSapJobs } from './fetch_sap_jobs.js';
+import { fetchSapJobs } from './systems/sap/fetch_sap_jobs.js';
 import { fetchPersonioJobs } from './systems/personio/fetch_personio_jobs.js';
 
 const app = express();
