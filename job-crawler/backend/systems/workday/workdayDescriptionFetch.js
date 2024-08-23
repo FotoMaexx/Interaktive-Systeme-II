@@ -1,6 +1,6 @@
 import puppeteer from 'puppeteer';
 
-console.log('descriptionFetch.js wurde geladen'); // Füge dies hinzu
+console.log('workdayDescriptionFetch.js wurde geladen'); // Füge dies hinzu
 
 export async function fetchAndExtendDescription(job) {
     const browser = await puppeteer.launch();
