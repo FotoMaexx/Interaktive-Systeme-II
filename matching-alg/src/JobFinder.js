@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
+import { RadioButtonGroup, RadioButton } from 'carbon-components-react';
+import { Button } from 'carbon-components-react';
 
 const JobFinder = () => {
+  const totalQuestions = 11; // Anzahl der Fragen
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState('');
   const [showResults, setShowResults] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (question, value) => {
     setAnswers({
       ...answers,
-      [e.target.name]: e.target.value,
+      [question]: value,
     });
   };
 
   const handleNext = () => {
-    if (currentQuestion < 11) {
+    if (currentQuestion < totalQuestions) {
       setCurrentQuestion(currentQuestion + 1);
     }
   };
@@ -25,10 +28,8 @@ const JobFinder = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Verhindert das Standardformularverhalten (Seiten-Neuladen)
-
-    if (Object.keys(answers).length < 11) {
+  const handleSubmit = () => {
+    if (Object.keys(answers).length < totalQuestions) {
       alert('Bitte beantworten Sie alle Fragen.');
       return;
     }
@@ -36,7 +37,7 @@ const JobFinder = () => {
     const calculatedResults = calculateResults();
     setResults(calculatedResults);
     setShowResults(true);
-    setCurrentQuestion(12); // Kein nächstes Fragefeld mehr
+    setCurrentQuestion(totalQuestions + 1); // Kein nächstes Fragefeld mehr
   };
 
   const handleRestart = () => {
@@ -71,34 +72,38 @@ const JobFinder = () => {
   const renderQuestion = (questionNumber, questionText) => (
     <div style={{ display: currentQuestion === questionNumber ? 'block' : 'none' }}>
       <h2>{questionText}</h2>
-      <div className="scale">
+      <p>Frage {questionNumber} von {totalQuestions}</p> {/* Dynamische Fortschritt-Anzeige */}
+      <RadioButtonGroup
+        name={`question${questionNumber}`}
+        valueSelected={answers[`question${questionNumber}`]}
+        onChange={(value) => handleChange(`question${questionNumber}`, value)}
+      >
         {[1, 2, 3, 4, 5].map((value) => (
-          <label key={value}>
-            <input
-              type="radio"
-              name={`question${questionNumber}`}
-              value={value}
-              checked={answers[`question${questionNumber}`] === `${value}`}
-              onChange={handleChange}
-              required
-            />
-            {value === 1 ? 'Keine' : value === 5 ? 'Sehr starkes Interesse' : ''}
-          </label>
+          <RadioButton
+            key={value}
+            id={`radio-${questionNumber}-${value}`}
+            value={value.toString()}
+            labelText={value === 1 ? 'Keine' : value === 5 ? 'Sehr starkes Interesse' : ''}
+          />
         ))}
+      </RadioButtonGroup>
+      <div className="button-group">
+        {questionNumber > 1 && (
+          <Button kind="secondary" size="md" onClick={handlePrev}>Zurück</Button>
+        )}
+        {questionNumber < totalQuestions ? (
+          <Button kind="primary" size="md" onClick={handleNext}>Weiter</Button>
+        ) : (
+          <Button kind="primary" size="md" onClick={handleSubmit}>Ergebnisse evaluieren</Button>
+        )}
       </div>
-      {questionNumber > 1 && <button type="button" onClick={handlePrev}>Zurück</button>}
-      {questionNumber < 11 ? (
-        <button type="button" onClick={handleNext}>Weiter</button>
-      ) : (
-        <button type="button" onClick={handleSubmit}>Ergebnisse evaluieren</button>
-      )}
     </div>
   );
 
   return (
     <div className="container">
       <h1>Jobfinder</h1>
-      <form id="job-form" onSubmit={handleSubmit}>
+      <form id="job-form">
         {renderQuestion(1, 'Besitzen Sie mathematisches und technisches Verständnis?')}
         {renderQuestion(2, 'Sind Sie kreativ und haben Ideen für neue Designs?')}
         {renderQuestion(3, 'Haben Sie räumliches Vorstellungsvermögen?')}
@@ -115,7 +120,7 @@ const JobFinder = () => {
           <div className="question">
             <h2>Ihre Ergebnisse</h2>
             <div id="results-content" dangerouslySetInnerHTML={{ __html: results }} />
-            <button type="button" onClick={handleRestart}>Nochmal starten</button>
+            <Button kind="primary" size="md" onClick={handleRestart}>Nochmal starten</Button>
           </div>
         )}
       </form>
@@ -124,6 +129,4 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
-
-
 
