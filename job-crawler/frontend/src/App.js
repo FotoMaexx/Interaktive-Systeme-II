@@ -20,6 +20,10 @@ function App() {
     setUrl(event.target.value);
   };
 
+  const handleLinkClick = (link) => {
+    setUrl(link);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -61,7 +65,7 @@ function App() {
               <TextInput
                 id="url-input"
                 labelText="Job URL"
-                 placeholder="https://example.com/jobs"
+                placeholder="https://example.com/jobs"
                 value={url}
                 onChange={handleUrlChange}
                 required
@@ -72,8 +76,16 @@ function App() {
             <Column>
               <RadioButtonGroup
                 name="systemType"
-                legendText="Wähle ein System"
-                defaultSelected="workday"
+                legendText={
+                  <>
+                    Wähle ein System <br /><br />
+                    Beispiellinks:<br />
+                    Workday: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://hensoldt.wd3.myworkdayjobs.com')}>https://hensoldt.wd3.myworkdayjobs.com</a><br />
+                    SAP: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://careers.kaercher.com/')}>https://careers.kaercher.com/</a><br />
+                    Personio: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://liqui-moly-gmbh.jobs.personio.com')}>https://liqui-moly-gmbh.jobs.personio.com</a>
+                  </>
+                }
+                defaultSelected="sap"
                 onChange={handleSystemChange}
               >
                 <RadioButton
@@ -85,21 +97,13 @@ function App() {
                   id="sap"
                   labelText="SAP"
                   value="sap"
-                  disabled
+                  // disabled
                 />
                 <RadioButton
-                  id="oracle"
-                  labelText="Oracle"
-                  value="oracle"
-                  disabled
+                  id="personio"
+                  labelText="Personio"
+                  value="personio"
                 />
-                <RadioButton
-                  id="icims"
-                  labelText="iCIMS"
-                  value="icims"
-                  disabled
-                />
-                {/* Füge weitere Optionen für andere Systeme hinzu */}
               </RadioButtonGroup>
             </Column>
           </Row>
