@@ -8,7 +8,12 @@ const JobFinder = () => {
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState('');
   const [showResults, setShowResults] = useState(false);
-  const [isAnswered, setIsAnswered] = useState(false); // Neuer Zustand für die Aktivierung des Buttons
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [started, setStarted] = useState(false); // Zustand für die Startseite
+
+  const handleStart = () => {
+    setStarted(true); // Startet die Umfrage
+  };
 
   const handleChange = (question, value) => {
     setAnswers({
@@ -49,7 +54,8 @@ const JobFinder = () => {
     setResults('');
     setShowResults(false);
     setCurrentQuestion(1);
-    setIsAnswered(false); // Button wieder deaktivieren
+    setIsAnswered(false);
+    setStarted(false); // Zurück zur Startseite
   };
 
   const calculateResults = () => {
@@ -114,37 +120,48 @@ const JobFinder = () => {
     <Theme theme="white">
       <Grid className="container" style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto' }}>
         <Column lg={12} md={8} sm={4} className="container">
-          <Heading as="h1" style={{ fontSize: '3rem', fontWeight: '700', marginBottom: '40px', color: '#333', textAlign: 'center' }}>
-            Jobfinder
-          </Heading>
-          <Form id="job-form" style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-            {renderQuestion(1, 'Besitzen Sie mathematisches und technisches Verständnis?')}
-            {renderQuestion(2, 'Sind Sie kreativ und haben Ideen für neue Designs?')}
-            {renderQuestion(3, 'Haben Sie räumliches Vorstellungsvermögen?')}
-            {renderQuestion(4, 'Arbeiten Sie gerne mit Kindern/Jugendlichen?')}
-            {renderQuestion(5, 'Haben Sie eine hohe Stresskapazität?')}
-            {renderQuestion(6, 'Besitzen Sie Durchsetzungsfähigkeit und Empathie?')}
-            {renderQuestion(7, 'Interessieren Sie sich für die Abläufe des menschlichen Organismus?')}
-            {renderQuestion(8, 'Haben Sie Spaß dabei, anderen Menschen zu helfen?')}
-            {renderQuestion(9, 'Sind Sie sorgfältig und zuverlässig?')}
-            {renderQuestion(10, 'Arbeiten Sie gerne im Team?')}
-            {renderQuestion(11, 'Haben Sie Interesse an neuen Medikationen?')}
+          {!started ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', backgroundColor: '#f4f4f4', borderRadius: '12px' }}>
+              <Heading as="h1" style={{ fontSize: '3rem', fontWeight: '700', marginBottom: '20px', color: '#333' }}>
+                Willkommen beim Jobfinder
+              </Heading>
+              <p style={{ fontSize: '1.5rem', color: '#666', marginBottom: '40px' }}>
+                Finde den Job, der am besten zu dir passt. 
+              </p>
+              <Button kind="primary" size="xl" onClick={handleStart} style={{ fontSize: '1.5rem', padding: '12px 24px' }}>
+                Jetzt starten
+              </Button>
+            </div>
+          ) : (
+            <Form id="job-form" style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+              {renderQuestion(1, 'Besitzen Sie mathematisches und technisches Verständnis?')}
+              {renderQuestion(2, 'Sind Sie kreativ und haben Ideen für neue Designs?')}
+              {renderQuestion(3, 'Haben Sie räumliches Vorstellungsvermögen?')}
+              {renderQuestion(4, 'Arbeiten Sie gerne mit Kindern/Jugendlichen?')}
+              {renderQuestion(5, 'Haben Sie eine hohe Stresskapazität?')}
+              {renderQuestion(6, 'Besitzen Sie Durchsetzungsfähigkeit und Empathie?')}
+              {renderQuestion(7, 'Interessieren Sie sich für die Abläufe des menschlichen Organismus?')}
+              {renderQuestion(8, 'Haben Sie Spaß dabei, anderen Menschen zu helfen?')}
+              {renderQuestion(9, 'Sind Sie sorgfältig und zuverlässig?')}
+              {renderQuestion(10, 'Arbeiten Sie gerne im Team?')}
+              {renderQuestion(11, 'Haben Sie Interesse an neuen Medikationen?')}
 
-            {showResults && (
-              <div className="question" style={{ marginTop: '40px' }}>
-                <Heading as="h3" style={{ marginBottom: '20px', fontSize: '2rem', fontWeight: '600', color: '#333' }}>Ihre Ergebnisse</Heading>
-                <div id="results-content" dangerouslySetInnerHTML={{ __html: results }} style={{ marginBottom: '30px', color: '#666', fontSize: '1.25rem' }} />
-                <Button kind="primary" size="lg" onClick={handleRestart} style={{ width: '100%' }}>Nochmal starten</Button>
-              </div>
-            )}
-          </Form>
-          {Object.keys(answers).length < totalQuestions && (
-            <InlineNotification
-              kind="error"
-              title="Unvollständige Antworten"
-              subtitle="Bitte beantworten Sie alle Fragen, bevor Sie fortfahren."
-              style={{ marginTop: '40px', fontSize: '1.25rem' }}
-            />
+              {showResults && (
+                <div className="question" style={{ marginTop: '40px' }}>
+                  <Heading as="h3" style={{ marginBottom: '20px', fontSize: '2rem', fontWeight: '600', color: '#333' }}>Ihre Ergebnisse</Heading>
+                  <div id="results-content" dangerouslySetInnerHTML={{ __html: results }} style={{ marginBottom: '30px', color: '#666', fontSize: '1.25rem' }} />
+                  <Button kind="primary" size="lg" onClick={handleRestart} style={{ width: '100%' }}>Nochmal starten</Button>
+                </div>
+              )}
+              {Object.keys(answers).length < totalQuestions && (
+                <InlineNotification
+                  kind="error"
+                  title="Unvollständige Antworten"
+                  subtitle="Bitte beantworten Sie alle Fragen, bevor Sie fortfahren."
+                  style={{ marginTop: '40px', fontSize: '1.25rem' }}
+                />
+              )}
+            </Form>
           )}
         </Column>
       </Grid>
