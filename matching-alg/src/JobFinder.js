@@ -8,23 +8,27 @@ const JobFinder = () => {
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState('');
   const [showResults, setShowResults] = useState(false);
+  const [isAnswered, setIsAnswered] = useState(false); // Neuer Zustand für die Aktivierung des Buttons
 
   const handleChange = (question, value) => {
     setAnswers({
       ...answers,
       [question]: value,
     });
+    setIsAnswered(true); // Button aktivieren, wenn eine Antwort ausgewählt ist
   };
 
   const handleNext = () => {
     if (currentQuestion < totalQuestions) {
       setCurrentQuestion(currentQuestion + 1);
+      setIsAnswered(!!answers[`question${currentQuestion + 1}`]); // Überprüfen, ob die nächste Frage bereits beantwortet ist
     }
   };
 
   const handlePrev = () => {
     if (currentQuestion > 1) {
       setCurrentQuestion(currentQuestion - 1);
+      setIsAnswered(!!answers[`question${currentQuestion - 1}`]); // Überprüfen, ob die vorherige Frage beantwortet ist
     }
   };
 
@@ -45,6 +49,7 @@ const JobFinder = () => {
     setResults('');
     setShowResults(false);
     setCurrentQuestion(1);
+    setIsAnswered(false); // Button wieder deaktivieren
   };
 
   const calculateResults = () => {
@@ -80,7 +85,7 @@ const JobFinder = () => {
         name={`question${questionNumber}`}
         valueSelected={answers[`question${questionNumber}`]}
         onChange={(value) => handleChange(`question${questionNumber}`, value)}
-        style={{ display: 'flex', flexDirection: 'column' }} // Hier wird die vertikale Anordnung festgelegt
+        style={{ display: 'flex', flexDirection: 'column' }}
       >
         {[1, 2, 3, 4, 5].map((value) => (
           <RadioButton
@@ -97,9 +102,9 @@ const JobFinder = () => {
           <Button kind="secondary" size="lg" onClick={handlePrev} style={{ flex: '1', marginRight: '20px' }}>Zurück</Button>
         )}
         {questionNumber < totalQuestions ? (
-          <Button kind="primary" size="lg" onClick={handleNext} style={{ flex: '1' }}>Weiter</Button>
+          <Button kind="primary" size="lg" onClick={handleNext} style={{ flex: '1' }} disabled={!isAnswered}>Weiter</Button>
         ) : (
-          <Button kind="primary" size="lg" onClick={handleSubmit} style={{ flex: '1' }}>Ergebnisse evaluieren</Button>
+          <Button kind="primary" size="lg" onClick={handleSubmit} style={{ flex: '1' }} disabled={!isAnswered}>Ergebnisse evaluieren</Button>
         )}
       </div>
     </div>
@@ -148,6 +153,7 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
+
 
 
 
