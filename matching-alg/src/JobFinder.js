@@ -58,6 +58,12 @@ const JobFinder = () => {
     setStarted(false);
   };
 
+  const handleHeaderClick = () => {
+    if (started) {
+      handleRestart();
+    }
+  };
+
   const calculateResults = () => {
     const jobRequirements = {
       Architekt: { question1: 5, question2: 5, question3: 5, question4: 0, question5: 0, question6: 0, question7: 0, question8: 0, question9: 0, question10: 0, question11: 0 },
@@ -119,7 +125,17 @@ const JobFinder = () => {
   return (
     <Theme theme="white">
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <header style={{ backgroundColor: '#333', color: '#fff', padding: '10px 20px', textAlign: 'center' }}>
+        <header
+          onClick={handleHeaderClick}
+          style={{
+            backgroundColor: '#333',
+            color: '#fff',
+            padding: '10px 20px',
+            textAlign: 'center',
+            cursor: 'pointer',
+            userSelect: 'none'
+          }}
+        >
           <Heading as="h1" style={{ fontSize: '2rem', margin: 0 }}>Jobfinder</Heading>
         </header>
         <main style={{ flex: '1', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
@@ -175,6 +191,7 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
+
 
 
 
