@@ -83,22 +83,33 @@ const JobFinder = () => {
 
   const calculateResults = () => {
     if (!jobRequirements.length) return '';
-
+  
     const jobScores = jobRequirements.map(job => {
       const requirements = job.requirements;
-      let score = 0;
+      let matchCount = 0;
+      let totalQuestions = Object.keys(requirements).length;
+  
+      // Zähle die Übereinstimmungen für jede Frage
       Object.keys(requirements).forEach(question => {
-        score += Math.abs(requirements[question] - (answers[question] || 0));
+        if (requirements[question] === (answers[question] || 0)) {
+          matchCount += 1;
+        }
       });
-      const percentage = 100 - (score / maxScore * 100);
+  
+      // Berechne den Prozentsatz der Übereinstimmungen
+      const percentage = (matchCount / totalQuestions) * 100;
       return { job: job.title, percentage: percentage.toFixed(2) };
     });
-
-    // Sort the jobs by percentage and take the top 4
+  
+    // Sortiere die Jobs nach Übereinstimmung und nimm die Top 4
     jobScores.sort((a, b) => b.percentage - a.percentage);
     const topJobs = jobScores.slice(0, 4);
+    
+    // Formatiere die Ergebnisse für die Anzeige
     return topJobs.map(jobScore => `<p>${jobScore.job}: ${jobScore.percentage}% Übereinstimmung</p>`).join('');
   };
+  
+  
 
   const renderQuestion = (questionNumber, questionText) => (
     <div style={{ display: currentQuestion === questionNumber ? 'block' : 'none', marginBottom: '40px' }}>
