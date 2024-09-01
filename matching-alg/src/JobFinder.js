@@ -1,15 +1,32 @@
-import React, { useState } from 'react';
-import { RadioButtonGroup, RadioButton, Button, Theme, Grid, Column, Form, Heading, InlineNotification } from '@carbon/react';
+import React, { useState, useEffect } from 'react';
+import { Button, Theme, Heading, Form, InlineNotification } from '@carbon/react';
 import '@carbon/styles/css/styles.css';
+import jobData from './jobsTest.json'; // Pfad zur JSON-Datei anpassen
 
 const JobFinder = () => {
-  const totalQuestions = 11;
+  const totalQuestions = 10;
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState('');
   const [showResults, setShowResults] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const [started, setStarted] = useState(false);
+  const [jobRequirements, setJobRequirements] = useState([]);
+  const [maxScore, setMaxScore] = useState(0);
+
+  useEffect(() => {
+    if (jobData && jobData.jobs) {
+      setJobRequirements(jobData.jobs);
+      
+      const max = jobData.jobs.reduce((acc, job) => {
+        const jobMax = Object.values(job.requirements).reduce((sum, value) => sum + value, 0);
+        return Math.max(acc, jobMax);
+      }, 0);
+      setMaxScore(max);
+    } else {
+      console.error('Job data is missing or not correctly formatted.');
+    }
+  }, []);
 
   const handleStart = () => {
     setStarted(true);
@@ -65,25 +82,22 @@ const JobFinder = () => {
   };
 
   const calculateResults = () => {
-    const jobRequirements = {
-      Architekt: { question1: 5, question2: 5, question3: 5, question4: 0, question5: 0, question6: 0, question7: 0, question8: 0, question9: 0, question10: 0, question11: 0 },
-      Lehrer: { question1: 0, question2: 0, question3: 0, question4: 5, question5: 5, question6: 5, question7: 0, question8: 0, question9: 0, question10: 0, question11: 0 },
-      Arzt: { question1: 0, question2: 0, question3: 0, question4: 0, question5: 0, question6: 0, question7: 5, question8: 5, question9: 5, question10: 5, question11: 5 }
-    };
+    if (!jobRequirements.length) return '';
 
-    const maxScore = 55;
-    const jobScores = Object.keys(jobRequirements).map(job => {
-      const requirements = jobRequirements[job];
+    const jobScores = jobRequirements.map(job => {
+      const requirements = job.requirements;
       let score = 0;
       Object.keys(requirements).forEach(question => {
         score += Math.abs(requirements[question] - (answers[question] || 0));
       });
       const percentage = 100 - (score / maxScore * 100);
-      return { job, percentage: percentage.toFixed(2) };
+      return { job: job.title, percentage: percentage.toFixed(2) };
     });
 
+    // Sort the jobs by percentage and take the top 4
     jobScores.sort((a, b) => b.percentage - a.percentage);
-    return jobScores.map(jobScore => `<p>${jobScore.job}: ${jobScore.percentage}% Übereinstimmung</p>`).join('');
+    const topJobs = jobScores.slice(0, 4);
+    return topJobs.map(jobScore => `<p>${jobScore.job}: ${jobScore.percentage}% Übereinstimmung</p>`).join('');
   };
 
   const renderQuestion = (questionNumber, questionText) => (
@@ -92,23 +106,23 @@ const JobFinder = () => {
         {questionText}
       </Heading>
       <p style={{ marginBottom: '20px', color: '#666', fontSize: '1.25rem' }}>Frage {questionNumber} von {totalQuestions}</p>
-      <RadioButtonGroup
-        orientation="vertical"
-        name={`question${questionNumber}`}
-        valueSelected={answers[`question${questionNumber}`]}
-        onChange={(value) => handleChange(`question${questionNumber}`, value)}
-        style={{ display: 'flex', flexDirection: 'column' }}
-      >
-        {[1, 2, 3, 4, 5].map((value) => (
-          <RadioButton
-            key={value}
-            id={`radio-${questionNumber}-${value}`}
-            value={value.toString()}
-            labelText={value === 1 ? 'Keine' : value === 5 ? 'Sehr starkes Interesse' : `Stufe ${value}`}
-            style={{ marginBottom: '10px', fontSize: '1.25rem', padding: '10px' }}
-          />
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '30px' }}>
+        {['Schlecht', 'Nicht gut', 'Mittelmäßig', 'Gut', 'Sehr gut'].map((label, index) => (
+          <label key={index} style={{ flex: 1, textAlign: 'center' }}>
+            <input
+              type="radio"
+              name={`question${questionNumber}`}
+              value={index + 1}
+              checked={answers[`question${questionNumber}`] === index + 1}
+              onChange={() => handleChange(`question${questionNumber}`, index + 1)}
+              style={{ marginRight: '8px' }}
+            />
+            {label}
+          </label>
         ))}
-      </RadioButtonGroup>
+      </div>
+
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
         {questionNumber > 1 && (
           <Button kind="secondary" size="lg" onClick={handlePrev} style={{ flex: '1', marginRight: '20px' }}>Zurück</Button>
@@ -154,17 +168,16 @@ const JobFinder = () => {
               </div>
             ) : (
               <Form id="job-form" style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                {renderQuestion(1, 'Besitzen Sie mathematisches und technisches Verständnis?')}
-                {renderQuestion(2, 'Sind Sie kreativ und haben Ideen für neue Designs?')}
-                {renderQuestion(3, 'Haben Sie räumliches Vorstellungsvermögen?')}
-                {renderQuestion(4, 'Arbeiten Sie gerne mit Kindern/Jugendlichen?')}
-                {renderQuestion(5, 'Haben Sie eine hohe Stresskapazität?')}
-                {renderQuestion(6, 'Besitzen Sie Durchsetzungsfähigkeit und Empathie?')}
-                {renderQuestion(7, 'Interessieren Sie sich für die Abläufe des menschlichen Organismus?')}
-                {renderQuestion(8, 'Haben Sie Spaß dabei, anderen Menschen zu helfen?')}
-                {renderQuestion(9, 'Sind Sie sorgfältig und zuverlässig?')}
-                {renderQuestion(10, 'Arbeiten Sie gerne im Team?')}
-                {renderQuestion(11, 'Haben Sie Interesse an neuen Medikationen?')}
+                {renderQuestion(1, 'Erforderliche Berufserfahrung')}
+                {renderQuestion(2, 'Erforderliche Ausbildung und Qualifikationen')}
+                {renderQuestion(3, 'Technische Fähigkeiten')}
+                {renderQuestion(4, 'Soft Skills')}
+                {renderQuestion(5, 'Branchenerfahrung')}
+                {renderQuestion(6, 'Sprachkenntnisse')}
+                {renderQuestion(7, 'Arbeitszeit und Flexibilität')}
+                {renderQuestion(8, 'Reisebereitschaft und Standort')}
+                {renderQuestion(9, 'Karriereentwicklung und Weiterbildungsangebote')}
+                {renderQuestion(10, 'Vergütung und Zusatzleistungen')}
 
                 {showResults && (
                   <div className="question" style={{ marginTop: '40px' }}>
@@ -191,6 +204,13 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
+
+
+
+
+
+
+
 
 
 
