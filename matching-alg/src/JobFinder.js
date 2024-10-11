@@ -17,7 +17,7 @@ const JobFinder = () => {
   useEffect(() => {
     if (jobData && jobData.jobs) {
       setJobRequirements(jobData.jobs);
-      
+
       const max = jobData.jobs.reduce((acc, job) => {
         const jobMax = Object.values(job.requirements).reduce((sum, value) => sum + value, 0);
         return Math.max(acc, jobMax);
@@ -83,33 +83,33 @@ const JobFinder = () => {
 
   const calculateResults = () => {
     if (!jobRequirements.length) return '';
-  
+
     const jobScores = jobRequirements.map(job => {
       const requirements = job.requirements;
       let matchCount = 0;
       let totalQuestions = Object.keys(requirements).length;
-  
+
       // Zähle die Übereinstimmungen für jede Frage
       Object.keys(requirements).forEach(question => {
         if (requirements[question] === (answers[question] || 0)) {
           matchCount += 1;
         }
       });
-  
+
       // Berechne den Prozentsatz der Übereinstimmungen
       const percentage = (matchCount / totalQuestions) * 100;
-      return { job: job.title, percentage: percentage.toFixed(2) };
+      return { job: job.title, percentage: percentage.toFixed(2), url: job.url }; // Füge die URL hinzu
     });
-  
+
     // Sortiere die Jobs nach Übereinstimmung und nimm die Top 4
     jobScores.sort((a, b) => b.percentage - a.percentage);
     const topJobs = jobScores.slice(0, 4);
-    
-    // Formatiere die Ergebnisse für die Anzeige
-    return topJobs.map(jobScore => `<p>${jobScore.job}: ${jobScore.percentage}% Übereinstimmung</p>`).join('');
+
+    // Formatiere die Ergebnisse als klickbare Links
+    return topJobs.map(jobScore => (
+      `<p><a href="${jobScore.url}" target="_blank" rel="noopener noreferrer">${jobScore.job}</a>: ${jobScore.percentage}% Übereinstimmung</p>`
+    )).join('');
   };
-  
-  
 
   const renderQuestion = (questionNumber, questionText) => (
     <div style={{ display: currentQuestion === questionNumber ? 'block' : 'none', marginBottom: '40px' }}>
@@ -192,18 +192,21 @@ const JobFinder = () => {
 
                 {showResults && (
                   <div className="question" style={{ marginTop: '40px' }}>
-                    <Heading as="h3" style={{ marginBottom: '20px', fontSize: '2rem', fontWeight: '600', color: '#333' }}>Ihre Ergebnisse</Heading>
-                    <div id="results-content" dangerouslySetInnerHTML={{ __html: results }} style={{ marginBottom: '30px', color: '#666', fontSize: '1.25rem' }} />
-                    <Button kind="primary" size="lg" onClick={handleRestart} style={{ width: '100%' }}>Nochmal starten</Button>
+                    <Heading as="h3" style={{ marginBottom: '20px', fontSize: '2rem', fontWeight: '600', color: '#333' }}>
+                      Ergebnisse
+                    </Heading>
+                    <div
+                      className="results"
+                      dangerouslySetInnerHTML={{ __html: results }}
+                      style={{ fontSize: '1.25rem', color: '#666', lineHeight: '1.6' }}
+                    />
                   </div>
                 )}
-                {Object.keys(answers).length < totalQuestions && (
-                  <InlineNotification
-                    kind="error"
-                    title="Unvollständige Antworten"
-                    subtitle="Bitte beantworten Sie alle Fragen, bevor Sie fortfahren."
-                    style={{ marginTop: '40px', fontSize: '1.25rem' }}
-                  />
+
+                {showResults && (
+                  <Button kind="secondary" size="lg" onClick={handleRestart} style={{ marginTop: '20px' }}>
+                    Neu starten
+                  </Button>
                 )}
               </Form>
             )}
@@ -215,18 +218,4 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
