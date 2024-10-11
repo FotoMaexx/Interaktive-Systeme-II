@@ -3,61 +3,61 @@
       {
         "title": "Systemingenieur*in",
         "requirements": {
-          "question1": 5,
-          "question2": 5,
-          "question3": 5,
-          "question4": 0,
-          "question5": 0,
-          "question6": 0,
-          "question7": 0,
-          "question8": 0,
-          "question9": 0,
-          "question10": 0
+          "question1": 9,
+          "question2": 8,
+          "question3": 8,
+          "question4": 8,
+          "question5": 7,
+          "question6": 8,
+          "question7": 5,
+          "question8": 6,
+          "question9": 4,
+          "question10": 4
         }
       },
       {
         "title": "Manager Industrial Participation / Offset",
         "requirements": {
-          "question1": 0,
-          "question2": 0,
-          "question3": 0,
-          "question4": 5,
-          "question5": 5,
-          "question6": 5,
-          "question7": 0,
-          "question8": 0,
-          "question9": 0,
-          "question10": 0
+          "question1": 8,
+          "question2": 8,
+          "question3": 7,
+          "question4": 8,
+          "question5": 7,
+          "question6": 8,
+          "question7": 5,
+          "question8": 6,
+          "question9": 4,
+          "question10": 4
         }
       },
       {
         "title": "Qualitätsingenieur*in für Avionic Projekte",
         "requirements": {
-          "question1": 0,
-          "question2": 0,
-          "question3": 0,
-          "question4": 0,
-          "question5": 0,
-          "question6": 0,
-          "question7": 0,
-          "question8": 0,
-          "question9": 5,
-          "question10": 0
+          "question1": 9,
+          "question2": 8,
+          "question3": 8,
+          "question4": 8,
+          "question5": 8,
+          "question6": 8,
+          "question7": 7,
+          "question8": 8,
+          "question9": 4,
+          "question10": 4
         }
       },
       {
         "title": "Praktikum im Bereich Sales, CRM & Market Intelligence",
         "requirements": {
-          "question1": 0,
-          "question2": 0,
-          "question3": 0,
-          "question4": 0,
-          "question5": 0,
-          "question6": 0,
-          "question7": 0,
-          "question8": 0,
-          "question9": 0,
-          "question10": 5
+          "question1": 5,
+          "question2": 6,
+          "question3": 6,
+          "question4": 7,
+          "question5": 5,
+          "question6": 7,
+          "question7": 7,
+          "question8": 6,
+          "question9": 4,
+          "question10": 6
         }
     }
     ]
