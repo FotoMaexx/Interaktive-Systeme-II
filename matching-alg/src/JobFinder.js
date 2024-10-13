@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Theme, Heading, Form, InlineNotification } from '@carbon/react';
+import { Button, Theme, Heading, Form } from '@carbon/react';
 import '@carbon/styles/css/styles.css';
 import jobData from './jobsTest.json'; // Pfad zur JSON-Datei anpassen
 
@@ -7,12 +7,13 @@ const JobFinder = () => {
   const totalQuestions = 10;
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [answers, setAnswers] = useState({});
-  const [results, setResults] = useState('');
+  const [results, setResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const [started, setStarted] = useState(false);
   const [jobRequirements, setJobRequirements] = useState([]);
   const [maxScore, setMaxScore] = useState(0);
+  const [selectedJob, setSelectedJob] = useState(null);
 
   useEffect(() => {
     if (jobData && jobData.jobs) {
@@ -68,11 +69,12 @@ const JobFinder = () => {
 
   const handleRestart = () => {
     setAnswers({});
-    setResults('');
+    setResults([]);
     setShowResults(false);
     setCurrentQuestion(1);
     setIsAnswered(false);
     setStarted(false);
+    setSelectedJob(null); // Rücksetzen der ausgewählten Job-Details
   };
 
   const handleHeaderClick = () => {
@@ -82,33 +84,29 @@ const JobFinder = () => {
   };
 
   const calculateResults = () => {
-    if (!jobRequirements.length) return '';
+    if (!jobRequirements.length) return [];
 
     const jobScores = jobRequirements.map(job => {
       const requirements = job.requirements;
       let matchCount = 0;
       let totalQuestions = Object.keys(requirements).length;
 
-      // Zähle die Übereinstimmungen für jede Frage
       Object.keys(requirements).forEach(question => {
         if (requirements[question] === (answers[question] || 0)) {
           matchCount += 1;
         }
       });
 
-      // Berechne den Prozentsatz der Übereinstimmungen
       const percentage = (matchCount / totalQuestions) * 100;
       return { job: job.title, percentage: percentage.toFixed(2), url: job.url }; // Füge die URL hinzu
     });
 
-    // Sortiere die Jobs nach Übereinstimmung und nimm die Top 4
     jobScores.sort((a, b) => b.percentage - a.percentage);
-    const topJobs = jobScores.slice(0, 4);
+    return jobScores.slice(0, 4);
+  };
 
-    // Formatiere die Ergebnisse als klickbare Links
-    return topJobs.map(jobScore => (
-      `<p><a href="${jobScore.url}" target="_blank" rel="noopener noreferrer">${jobScore.job}</a>: ${jobScore.percentage}% Übereinstimmung</p>`
-    )).join('');
+  const handleJobClick = (job) => {
+    setSelectedJob(job);
   };
 
   const renderQuestion = (questionNumber, questionText) => (
@@ -195,18 +193,33 @@ const JobFinder = () => {
                     <Heading as="h3" style={{ marginBottom: '20px', fontSize: '2rem', fontWeight: '600', color: '#333' }}>
                       Ergebnisse
                     </Heading>
-                    <div
-                      className="results"
-                      dangerouslySetInnerHTML={{ __html: results }}
-                      style={{ fontSize: '1.25rem', color: '#666', lineHeight: '1.6' }}
-                    />
-                  </div>
-                )}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {results.map((result) => (
+                        <Button
+                          key={result.job}
+                          kind="primary"
+                          size="lg"
+                          onClick={() => handleJobClick(result)}
+                          style={{ flex: '1', textAlign: 'left' }}
+                        >
+                          {result.job}
+                        </Button>
+                      ))}
+                    </div>
 
-                {showResults && (
-                  <Button kind="secondary" size="lg" onClick={handleRestart} style={{ marginTop: '20px' }}>
-                    Neu starten
-                  </Button>
+                    {selectedJob && (
+                      <div style={{ marginTop: '20px', backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px' }}>
+                        <Heading as="h4" style={{ fontSize: '1.5rem', marginBottom: '10px' }}>
+                          {selectedJob.job}
+                        </Heading>
+                        <p>Übereinstimmung: {selectedJob.percentage}%</p>
+                        <p>
+                          <a href={selectedJob.url} target="_blank" rel="noopener noreferrer">Mehr Informationen</a>
+                        </p>
+                        <Button kind="secondary" size="sm" onClick={() => setSelectedJob(null)}>Zurück zur Übersicht</Button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </Form>
             )}
@@ -218,4 +231,8 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
+
+
+
+
 
