@@ -14,6 +14,7 @@ const JobFinder = () => {
   const [jobRequirements, setJobRequirements] = useState([]);
   const [maxScore, setMaxScore] = useState(0);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [view, setView] = useState('questions'); // Neue State-Variable für die aktuelle Ansicht
 
   useEffect(() => {
     if (jobData && jobData.jobs) {
@@ -65,6 +66,7 @@ const JobFinder = () => {
     setResults(calculatedResults);
     setShowResults(true);
     setCurrentQuestion(totalQuestions + 1);
+    setView('results'); // Wechselt zur Ergebnisse-Ansicht
   };
 
   const handleRestart = () => {
@@ -74,13 +76,8 @@ const JobFinder = () => {
     setCurrentQuestion(1);
     setIsAnswered(false);
     setStarted(false);
-    setSelectedJob(null); // Rücksetzen der ausgewählten Job-Details
-  };
-
-  const handleHeaderClick = () => {
-    if (started) {
-      handleRestart();
-    }
+    setSelectedJob(null);
+    setView('questions'); // Setze die Ansicht zurück
   };
 
   const calculateResults = () => {
@@ -98,7 +95,7 @@ const JobFinder = () => {
       });
 
       const percentage = (matchCount / totalQuestions) * 100;
-      return { job: job.title, percentage: percentage.toFixed(2), url: job.url }; // Füge die URL hinzu
+      return { job: job.title, percentage: percentage.toFixed(2), url: job.url, additionalInfo: job.additionalInfo }; // Füge die zusätzlichen Informationen hinzu
     });
 
     jobScores.sort((a, b) => b.percentage - a.percentage);
@@ -107,6 +104,12 @@ const JobFinder = () => {
 
   const handleJobClick = (job) => {
     setSelectedJob(job);
+    setView('details'); // Wechselt zur Detailansicht
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedJob(null);
+    setView('results'); // Gehe zurück zu den Ergebnissen
   };
 
   const renderQuestion = (questionNumber, questionText) => (
@@ -145,11 +148,25 @@ const JobFinder = () => {
     </div>
   );
 
+  const renderJobDetails = () => (
+    <div style={{ marginTop: '20px', backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px' }}>
+      <Heading as="h4" style={{ fontSize: '1.5rem', marginBottom: '10px' }}>
+        {selectedJob.job}
+      </Heading>
+      <p>Übereinstimmung: {selectedJob.percentage}%</p>
+      <p>{selectedJob.additionalInfo}</p> {/* Zusätzliche Informationen anzeigen */}
+      <p>
+        <Button kind="secondary" size="sm" onClick={handleCloseDetails}>Schließen</Button>
+        <Button kind="primary" size="sm" onClick={() => window.open(selectedJob.url, '_blank')}>Jetzt bewerben</Button>
+      </p>
+    </div>
+  );
+
   return (
     <Theme theme="white">
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <header
-          onClick={handleHeaderClick}
+          onClick={handleRestart}
           style={{
             backgroundColor: '#333',
             color: '#fff',
@@ -177,60 +194,56 @@ const JobFinder = () => {
               </div>
             ) : (
               <Form id="job-form" style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
-                {renderQuestion(1, 'Erforderliche Berufserfahrung')}
-                {renderQuestion(2, 'Erforderliche Ausbildung und Qualifikationen')}
-                {renderQuestion(3, 'Technische Fähigkeiten')}
-                {renderQuestion(4, 'Soft Skills')}
-                {renderQuestion(5, 'Branchenerfahrung')}
-                {renderQuestion(6, 'Sprachkenntnisse')}
-                {renderQuestion(7, 'Arbeitszeit und Flexibilität')}
-                {renderQuestion(8, 'Reisebereitschaft und Standort')}
-                {renderQuestion(9, 'Karriereentwicklung und Weiterbildungsangebote')}
-                {renderQuestion(10, 'Vergütung und Zusatzleistungen')}
-
-                {showResults && (
-                  <div className="question" style={{ marginTop: '40px' }}>
-                    <Heading as="h3" style={{ marginBottom: '20px', fontSize: '2rem', fontWeight: '600', color: '#333' }}>
-                      Ergebnisse
-                    </Heading>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      {results.map((result) => (
-                        <Button
-                          key={result.job}
-                          kind="primary"
-                          size="lg"
-                          onClick={() => handleJobClick(result)}
-                          style={{ flex: '1', textAlign: 'left' }}
-                        >
-                          {result.job}
-                        </Button>
-                      ))}
-                    </div>
-
-                    {selectedJob && (
-                      <div style={{ marginTop: '20px', backgroundColor: '#f9f9f9', padding: '20px', borderRadius: '8px' }}>
-                        <Heading as="h4" style={{ fontSize: '1.5rem', marginBottom: '10px' }}>
-                          {selectedJob.job}
-                        </Heading>
-                        <p>Übereinstimmung: {selectedJob.percentage}%</p>
-                        <p>
-                          <a href={selectedJob.url} target="_blank" rel="noopener noreferrer">Mehr Informationen</a>
-                        </p>
-                        <Button kind="secondary" size="sm" onClick={() => setSelectedJob(null)}>Zurück zur Übersicht</Button>
-                      </div>
-                    )}
-                  </div>
+                {view === 'questions' && (
+                  <>
+                    {renderQuestion(1, 'Wie bewerten Sie Ihre Programmierkenntnisse?')}
+                    {renderQuestion(2, 'Wie gut kennen Sie sich mit Datenbanken aus?')}
+                    {renderQuestion(3, 'Wie gut sind Ihre Kenntnisse in Webentwicklung?')}
+                    {renderQuestion(4, 'Wie sicher sind Sie im Umgang mit Versionierungssystemen?')}
+                    {renderQuestion(5, 'Wie würden Sie Ihre Kommunikationsfähigkeiten bewerten?')}
+                    {renderQuestion(6, 'Wie gut können Sie im Team arbeiten?')}
+                    {renderQuestion(7, 'Wie sehr interessieren Sie sich für neue Technologien?')}
+                    {renderQuestion(8, 'Wie wichtig ist Ihnen Work-Life-Balance?')}
+                    {renderQuestion(9, 'Wie bewerten Sie Ihre Problemlösungsfähigkeiten?')}
+                    {renderQuestion(10, 'Wie gut sind Ihre Kenntnisse im Projektmanagement?')}
+                  </>
                 )}
+                {view === 'results' && (
+                  <>
+                    <Heading as="h2" style={{ marginBottom: '20px', fontSize: '2rem', fontWeight: '600', color: '#333' }}>
+                      Ihre Ergebnisse
+                    </Heading>
+                    <div style={{ marginBottom: '20px' }}>
+                      {results.length > 0 ? (
+                        results.map((job, index) => (
+                          <div key={index} style={{ marginBottom: '10px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px' }}>
+                            <p style={{ fontSize: '1.5rem', margin: '0' }}>{job.job}</p>
+                            <p>Übereinstimmung: {job.percentage}%</p>
+                            <Button kind="tertiary" size="sm" onClick={() => handleJobClick(job)}>Mehr Informationen</Button>
+                          </div>
+                        ))
+                      ) : (
+                        <p style={{ color: '#999' }}>Keine Ergebnisse gefunden.</p>
+                      )}
+                    </div>
+                    <Button kind="primary" size="lg" onClick={handleRestart}>Neuen Test starten</Button>
+                  </>
+                )}
+                {view === 'details' && selectedJob && renderJobDetails()} {/* Detailansicht */}
               </Form>
             )}
           </div>
         </main>
+        <footer style={{ backgroundColor: '#333', color: '#fff', padding: '10px', textAlign: 'center' }}>
+          <p style={{ margin: 0 }}>© 2024 Jobfinder. Alle Rechte vorbehalten.</p>
+        </footer>
       </div>
     </Theme>
   );
 };
 
 export default JobFinder;
+
 
 
 

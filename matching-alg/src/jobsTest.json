@@ -2,6 +2,8 @@
     "jobs": [
       {
         "title": "Systemingenieur*in",
+        "url": "https://example.com/job",
+      "additionalInfo": "Hier sind weitere Informationen über den Job als Software Engineer.",
         "requirements": {
           "question1": 9,
           "question2": 8,
@@ -17,6 +19,8 @@
       },
       {
         "title": "Manager Industrial Participation / Offset",
+        "url": "https://example.com/job",
+      "additionalInfo": "Hier sind weitere Informationen über den Job als Software Engineer.",
         "requirements": {
           "question1": 8,
           "question2": 8,
@@ -32,6 +36,8 @@
       },
       {
         "title": "Qualitätsingenieur*in für Avionic Projekte",
+        "url": "https://example.com/job",
+      "additionalInfo": "Hier sind weitere Informationen über den Job als Software Engineer.",
         "requirements": {
           "question1": 9,
           "question2": 8,
@@ -47,6 +53,8 @@
       },
       {
         "title": "Praktikum im Bereich Sales, CRM & Market Intelligence",
+        "url": "https://example.com/job",
+      "additionalInfo": "Hier sind weitere Informationen über den Job als Software Engineer.",
         "requirements": {
           "question1": 5,
           "question2": 6,
