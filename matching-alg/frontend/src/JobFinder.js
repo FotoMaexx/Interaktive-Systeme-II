@@ -10,21 +10,19 @@ const JobFinder = () => {
   const [showResults, setShowResults] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const [started, setStarted] = useState(false);
-  const [jobBewertung, setJobBewertung] = useState([]);  // Jobdaten im State speichern
+  const [jobBewertung, setJobBewertung] = useState([]);  
   const [maxScore, setMaxScore] = useState(0);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [view, setView] = useState('questions'); // Neue State-Variable für die aktuelle Ansicht
+  const [view, setView] = useState('questions'); 
 
   // Jobdaten aus dem Backend laden
   useEffect(() => {
-    fetch('http://localhost:5001/api/ci/jobs')  // Pfad zum Job-API-Endpunkt
+    fetch('http://localhost:5001/api/ci/jobs')  // API-Endpunkt
       .then(response => response.json())
       .then(data => {
-        if (data.jobs) {
-          setJobBewertung(data.jobs);  // Jobdaten im State speichern
-
-          // Berechnung des maximalen Scores für die Jobs
-          const max = data.jobs.reduce((acc, job) => {
+        if (data && data.length > 0) {  // Überprüfung auf gültige Daten
+          setJobBewertung(data);  // Jobdaten speichern
+          const max = data.reduce((acc, job) => {
             const jobMax = Object.values(job.Bewertung).reduce((sum, value) => sum + value, 0);
             return Math.max(acc, jobMax);
           }, 0);
@@ -34,9 +32,9 @@ const JobFinder = () => {
         }
       })
       .catch(error => console.error('Fehler beim Laden der Jobdaten:', error));
-  }, []);  // useEffect wird einmal beim Laden der Komponente aufgerufen
+  }, []);  
 
-  // Handhabung des Testbeginns
+  // Testbeginn
   const handleStart = () => {
     setStarted(true);
   };
@@ -75,7 +73,7 @@ const JobFinder = () => {
     setResults(calculatedResults);
     setShowResults(true);
     setCurrentQuestion(totalQuestions + 1);
-    setView('results'); // Wechselt zur Ergebnisse-Ansicht
+    setView('results'); 
   };
 
   const handleRestart = () => {
@@ -86,7 +84,7 @@ const JobFinder = () => {
     setIsAnswered(false);
     setStarted(false);
     setSelectedJob(null);
-    setView('questions'); // Setze die Ansicht zurück
+    setView('questions'); 
   };
 
   // Berechnung der Übereinstimmung der Antworten mit den Jobbewertungen
@@ -96,7 +94,7 @@ const JobFinder = () => {
     const jobScores = jobBewertung.map(job => {
       const Bewertung = job.Bewertung;
       let matchCount = 0;
-      let totalQuestions = Object.keys(Bewertung).length;
+      const totalQuestions = Object.keys(Bewertung).length;
 
       // Definiere die Fragen und deren Zuordnung zur Bewertung
       const questions = {
@@ -128,16 +126,14 @@ const JobFinder = () => {
     return jobScores.slice(0, 4);  // Zeige die Top 4 Ergebnisse
   };
 
-  // Handhabung des Klicks auf ein Job
   const handleJobClick = (job) => {
     setSelectedJob(job);
-    setView('details'); // Wechselt zur Detailansicht
+    setView('details'); 
   };
 
-  // Handhabung des Schließens der Detailansicht
   const handleCloseDetails = () => {
     setSelectedJob(null);
-    setView('results'); // Gehe zurück zu den Ergebnissen
+    setView('results'); 
   };
 
   const renderQuestion = (questionNumber, questionText) => (
@@ -209,61 +205,63 @@ const JobFinder = () => {
         <main style={{ flex: '1', display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px' }}>
           <div style={{ maxWidth: '800px', width: '100%' }}>
             {!started ? (
-              <div style={{ textAlign: 'center', padding: '60px 20px', backgroundColor: '#f4f4f4', borderRadius: '12px', margin: '0 auto' }}>
-                <Heading as="h1" style={{ fontSize: '3rem', fontWeight: '700', marginBottom: '20px', color: '#333' }}>
-                  Willkommen beim Jobfinder
-                </Heading>
-                <p style={{ fontSize: '1.5rem', color: '#666', marginBottom: '40px' }}>
-                  Finde den Job, der am besten zu dir passt. Klicke auf den Button unten, um zu starten.
-                </p>
-                <Button kind="primary" size="xl" onClick={handleStart} style={{ fontSize: '1.5rem', padding: '12px 24px' }}>
-                  Jetzt starten
-                </Button>
+              <div style={{ textAlign: 'center' }}>
+                <Heading as="h2" style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Finde den besten Job für dich!</Heading>
+                <Button kind="primary" size="lg" onClick={handleStart}>Starten</Button>
               </div>
             ) : (
-              <Form id="job-form" style={{ backgroundColor: '#fff', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+              <Form>
                 {view === 'questions' && (
                   <>
-                    {renderQuestion(1, 'Wie bewerten Sie Ihre Programmierkenntnisse?')}
-                    {renderQuestion(2, 'Wie gut kennen Sie sich mit Datenbanken aus?')}
-                    {renderQuestion(3, 'Wie gut sind Ihre Kenntnisse in Webentwicklung?')}
-                    {renderQuestion(4, 'Wie sicher sind Sie im Umgang mit Versionierungssystemen?')}
-                    {renderQuestion(5, 'Wie würden Sie Ihre Kommunikationsfähigkeiten bewerten?')}
-                    {renderQuestion(6, 'Wie gut können Sie im Team arbeiten?')}
-                    {renderQuestion(7, 'Wie sehr interessieren Sie sich für neue Technologien?')}
-                    {renderQuestion(8, 'Wie wichtig ist Ihnen Work-Life-Balance?')}
-                    {renderQuestion(9, 'Wie bewerten Sie Ihre Problemlösungsfähigkeiten?')}
-                    {renderQuestion(10, 'Wie gut sind Ihre Kenntnisse im Projektmanagement?')}
+                    {renderQuestion(1, 'Wie gut passt deine Berufserfahrung zu dieser Art von Job?')}
+                    {renderQuestion(2, 'Wie qualifiziert fühlst du dich in Bezug auf die benötigte Ausbildung?')}
+                    {renderQuestion(3, 'Wie gut passt dein technisches Wissen zu den Anforderungen?')}
+                    {renderQuestion(4, 'Wie stark sind deine Soft Skills in Bezug auf die Rolle?')}
+                    {renderQuestion(5, 'Wie viel Erfahrung hast du in der Branche, in der dieser Job ist?')}
+                    {renderQuestion(6, 'Wie gut sind deine Sprachkenntnisse für diesen Job?')}
+                    {renderQuestion(7, 'Wie flexibel bist du in Bezug auf Arbeitszeiten?')}
+                    {renderQuestion(8, 'Wie bereit bist du zu reisen oder den Standort zu wechseln?')}
+                    {renderQuestion(9, 'Wie wichtig sind dir Weiterbildung und Karrieremöglichkeiten?')}
+                    {renderQuestion(10, 'Wie zufrieden wärst du mit der Vergütung und den Zusatzleistungen?')}
                   </>
                 )}
+
                 {view === 'results' && (
                   <>
-                    <Heading as="h2" style={{ marginBottom: '20px', fontSize: '2rem', fontWeight: '600', color: '#333' }}>
-                      Ihre Ergebnisse
+                    <Heading as="h3" style={{ fontSize: '1.5rem', marginBottom: '20px' }}>
+                      Deine besten Job-Matches:
                     </Heading>
-                    <div style={{ marginBottom: '20px' }}>
-                      {results.length > 0 ? (
-                        results.map((job, index) => (
-                          <div key={index} style={{ marginBottom: '10px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px' }}>
-                            <p style={{ fontSize: '1.5rem', margin: '0' }}>{job.job}</p>
-                            <p>Dieser Job passt zu  {job.percentage}% zu dir</p>
-                            <Button kind="tertiary" size="sm" onClick={() => handleJobClick(job)}>Mehr Informationen</Button>
-                          </div>
-                        ))
-                      ) : (
-                        <p style={{ color: '#999' }}>Keine Ergebnisse gefunden.</p>
-                      )}
-                    </div>
-                    <Button kind="primary" size="lg" onClick={handleRestart}>Neuen Test starten</Button>
+                    <ul>
+                      {results.map((job, index) => (
+                        <li key={index} style={{ marginBottom: '15px' }}>
+                          <button
+                            onClick={() => handleJobClick(job)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              textAlign: 'left',
+                              color: '#0072c3',
+                              textDecoration: 'underline',
+                              cursor: 'pointer',
+                              fontSize: '1.25rem'
+                            }}
+                          >
+                            {job.job} ({job.percentage}%)
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button kind="secondary" size="lg" onClick={handleRestart}>Erneut starten</Button>
                   </>
                 )}
-                {view === 'details' && selectedJob && renderJobDetails()} {/* Detailansicht */}
+
+                {view === 'details' && selectedJob && renderJobDetails()}
               </Form>
             )}
           </div>
         </main>
-        <footer style={{ backgroundColor: 'var(--secondary-color', color: '#fff', padding: '10px', textAlign: 'center' }}>
-          <p style={{ margin: 0 }}>© 2024 Jobfinder. Alle Rechte vorbehalten.</p>
+        <footer style={{ backgroundColor: '#f0f0f0', padding: '10px', textAlign: 'center' }}>
+          <p style={{ margin: 0 }}>© 2024 Jobfinder - All rights reserved.</p>
         </footer>
       </div>
     </Theme>
@@ -271,3 +269,4 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
+
