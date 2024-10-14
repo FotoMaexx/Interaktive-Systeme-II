@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import jobData from './jobs.json'; // Pfad zur JSON-Datei anpassen
 
 const JobDetail = () => {
-  const { jobTitle } = useParams(); // Nimmt den Jobtitel aus der URL
-  const navigate = useNavigate(); // Verwende den navigate-Hook, um zurück zu navigieren
+  const { jobTitle } = useParams();
+  const [job, setJob] = useState(null);
+  const navigate = useNavigate();
 
-  // Stelle sicher, dass der Jobtitel dekodiert wird
-  const decodedTitle = decodeURIComponent(jobTitle);
-  const job = jobData.jobs.find(job => job.title === decodedTitle); // Suche den Job mit dem dekodierten Titel
+  useEffect(() => {
+    // Dynamischer Abruf der Jobdaten basierend auf dem Job-Titel
+    fetch('/api/jobs') // Abruf der gesamten Jobliste
+      .then(response => response.json())
+      .then(data => {
+        const decodedTitle = decodeURIComponent(jobTitle);
+        const foundJob = data.jobs.find(job => job.title === decodedTitle);
+        setJob(foundJob);
+      })
+      .catch(error => console.error('Error fetching job data:', error));
+  }, [jobTitle]);
 
   if (!job) {
     return <p>Job nicht gefunden.</p>;
@@ -45,6 +53,3 @@ const JobDetail = () => {
 };
 
 export default JobDetail;
-
-
-

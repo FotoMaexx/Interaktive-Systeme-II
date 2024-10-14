@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Theme, Heading, Form } from '@carbon/react';
 import '@carbon/styles/css/styles.css';
-import jobData from './jobs.json'; // Pfad zur JSON-Datei anpassen
-//import jobData from './jobs.json'; // Pfad zur JSON-Datei anpassen
-
 
 const JobFinder = () => {
   const totalQuestions = 10;
@@ -13,29 +10,38 @@ const JobFinder = () => {
   const [showResults, setShowResults] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const [started, setStarted] = useState(false);
-  const [jobBewertung, setJobBewertung] = useState([]);
+  const [jobBewertung, setJobBewertung] = useState([]);  // Jobdaten im State speichern
   const [maxScore, setMaxScore] = useState(0);
   const [selectedJob, setSelectedJob] = useState(null);
   const [view, setView] = useState('questions'); // Neue State-Variable für die aktuelle Ansicht
 
+  // Jobdaten aus dem Backend laden
   useEffect(() => {
-    if (jobData && jobData.jobs) {
-      setJobBewertung(jobData.jobs);
+    fetch('http://localhost:5001/api/ci/jobs')  // Pfad zum Job-API-Endpunkt
+      .then(response => response.json())
+      .then(data => {
+        if (data.jobs) {
+          setJobBewertung(data.jobs);  // Jobdaten im State speichern
 
-      const max = jobData.jobs.reduce((acc, job) => {
-        const jobMax = Object.values(job.Bewertung).reduce((sum, value) => sum + value, 0);
-        return Math.max(acc, jobMax);
-      }, 0);
-      setMaxScore(max);
-    } else {
-      console.error('Job data is missing or not correctly formatted.');
-    }
-  }, []);
+          // Berechnung des maximalen Scores für die Jobs
+          const max = data.jobs.reduce((acc, job) => {
+            const jobMax = Object.values(job.Bewertung).reduce((sum, value) => sum + value, 0);
+            return Math.max(acc, jobMax);
+          }, 0);
+          setMaxScore(max);
+        } else {
+          console.error('Keine Jobs in den Daten gefunden.');
+        }
+      })
+      .catch(error => console.error('Fehler beim Laden der Jobdaten:', error));
+  }, []);  // useEffect wird einmal beim Laden der Komponente aufgerufen
 
+  // Handhabung des Testbeginns
   const handleStart = () => {
     setStarted(true);
   };
 
+  // Handhabung der Antwortänderung für jede Frage
   const handleChange = (question, value) => {
     setAnswers({
       ...answers,
@@ -58,6 +64,7 @@ const JobFinder = () => {
     }
   };
 
+  // Handhabung des Ergebnisses
   const handleSubmit = () => {
     if (Object.keys(answers).length < totalQuestions) {
       alert('Bitte beantworten Sie alle Fragen.');
@@ -82,15 +89,16 @@ const JobFinder = () => {
     setView('questions'); // Setze die Ansicht zurück
   };
 
+  // Berechnung der Übereinstimmung der Antworten mit den Jobbewertungen
   const calculateResults = () => {
     if (!jobBewertung.length) return [];
-  
+
     const jobScores = jobBewertung.map(job => {
       const Bewertung = job.Bewertung;
       let matchCount = 0;
       let totalQuestions = Object.keys(Bewertung).length;
-  
-      // Passe den Vergleich an die Bewertungskategorien an
+
+      // Definiere die Fragen und deren Zuordnung zur Bewertung
       const questions = {
         question1: "Erforderliche Berufserfahrung",
         question2: "Erforderliche Ausbildung und Qualifikationen",
@@ -103,7 +111,7 @@ const JobFinder = () => {
         question9: "Karriereentwicklung und Weiterbildungsangebote",
         question10: "Vergütung und Zusatzleistungen"
       };
-  
+
       // Vergleiche die Antworten mit den entsprechenden Kategorien in "Bewertung"
       Object.keys(questions).forEach((key) => {
         const questionKey = questions[key];
@@ -111,20 +119,22 @@ const JobFinder = () => {
           matchCount += 1;
         }
       });
-  
+
       const percentage = (matchCount / totalQuestions) * 100;
       return { job: job.title, percentage: percentage.toFixed(2), url: job.link, description: job.description };
     });
-  
+
     jobScores.sort((a, b) => b.percentage - a.percentage);
-    return jobScores.slice(0, 4);
+    return jobScores.slice(0, 4);  // Zeige die Top 4 Ergebnisse
   };
 
+  // Handhabung des Klicks auf ein Job
   const handleJobClick = (job) => {
     setSelectedJob(job);
     setView('details'); // Wechselt zur Detailansicht
   };
 
+  // Handhabung des Schließens der Detailansicht
   const handleCloseDetails = () => {
     setSelectedJob(null);
     setView('results'); // Gehe zurück zu den Ergebnissen
@@ -172,7 +182,7 @@ const JobFinder = () => {
         {selectedJob.job}
       </Heading>
       <p>Dieser Job passt zu {selectedJob.percentage}% zu dir</p>
-      <p>{selectedJob.additionalInfo}</p> {/* Zusätzliche Informationen anzeigen */}
+      <p>{selectedJob.additionalInfo}</p>
       <p>
         <Button kind="secondary" size="sm" onClick={handleCloseDetails}>Schließen</Button>
         <Button kind="primary" size="sm" onClick={() => window.open(selectedJob.link, '_blank')}>Jetzt bewerben</Button>
@@ -186,7 +196,7 @@ const JobFinder = () => {
         <header
           onClick={handleRestart}
           style={{
-            backgroundColor: '#333',
+            backgroundColor: 'var(--primary-color)',
             color: '#fff',
             padding: '10px 20px',
             textAlign: 'center',
@@ -252,7 +262,7 @@ const JobFinder = () => {
             )}
           </div>
         </main>
-        <footer style={{ backgroundColor: '#333', color: '#fff', padding: '10px', textAlign: 'center' }}>
+        <footer style={{ backgroundColor: 'var(--secondary-color', color: '#fff', padding: '10px', textAlign: 'center' }}>
           <p style={{ margin: 0 }}>© 2024 Jobfinder. Alle Rechte vorbehalten.</p>
         </footer>
       </div>
@@ -261,7 +271,3 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
-
-
-
-

@@ -1,3 +1,12 @@
+:root {
+  --primary-color: #3498db; /* Fallback-Wert */
+  --secondary-color: #2ecc71; /* Fallback-Wert */
+}
+
+body {
+  font-family: Arial, sans-serif; /* Fallback-Schriftart */
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

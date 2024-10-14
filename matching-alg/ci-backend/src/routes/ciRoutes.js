@@ -1,19 +1,15 @@
 const express = require('express');
-const multer = require('multer');
 const ciController = require('../controllers/ciController');
+const multer = require('multer');
 
 const router = express.Router();
-
-// Setup für Datei-Uploads mit Multer
 const upload = multer({ dest: 'uploads/' });
 
-// Route zum Abrufen der aktuellen CI-Daten
+// Routen
 router.get('/', ciController.getCI);
-
-// Route zum Aktualisieren der CI-Daten
 router.post('/', ciController.updateCI);
-
-// Route zum Hochladen eines Firmenlogos
 router.post('/upload-logo', upload.single('logo'), ciController.uploadLogo);
+router.post('/upload-jobs', upload.single('jsonFile'), ciController.uploadJobsJson); // JSON hochladen
+router.get('/jobs', ciController.getJobs); // Jobdaten abrufen
 
 module.exports = router;
