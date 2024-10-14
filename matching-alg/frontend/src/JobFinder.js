@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Theme, Heading, Form } from '@carbon/react';
 import '@carbon/styles/css/styles.css';
-import jobData from './jobsTest.json'; // Pfad zur JSON-Datei anpassen
+import jobData from './jobs.json'; // Pfad zur JSON-Datei anpassen
 //import jobData from './jobs.json'; // Pfad zur JSON-Datei anpassen
 
 
@@ -13,17 +13,17 @@ const JobFinder = () => {
   const [showResults, setShowResults] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const [started, setStarted] = useState(false);
-  const [jobRequirements, setJobRequirements] = useState([]);
+  const [jobBewertung, setJobBewertung] = useState([]);
   const [maxScore, setMaxScore] = useState(0);
   const [selectedJob, setSelectedJob] = useState(null);
   const [view, setView] = useState('questions'); // Neue State-Variable für die aktuelle Ansicht
 
   useEffect(() => {
     if (jobData && jobData.jobs) {
-      setJobRequirements(jobData.jobs);
+      setJobBewertung(jobData.jobs);
 
       const max = jobData.jobs.reduce((acc, job) => {
-        const jobMax = Object.values(job.requirements).reduce((sum, value) => sum + value, 0);
+        const jobMax = Object.values(job.Bewertung).reduce((sum, value) => sum + value, 0);
         return Math.max(acc, jobMax);
       }, 0);
       setMaxScore(max);
@@ -83,23 +83,39 @@ const JobFinder = () => {
   };
 
   const calculateResults = () => {
-    if (!jobRequirements.length) return [];
-
-    const jobScores = jobRequirements.map(job => {
-      const requirements = job.requirements;
+    if (!jobBewertung.length) return [];
+  
+    const jobScores = jobBewertung.map(job => {
+      const Bewertung = job.Bewertung;
       let matchCount = 0;
-      let totalQuestions = Object.keys(requirements).length;
-
-      Object.keys(requirements).forEach(question => {
-        if (requirements[question] === (answers[question] || 0)) {
+      let totalQuestions = Object.keys(Bewertung).length;
+  
+      // Passe den Vergleich an die Bewertungskategorien an
+      const questions = {
+        question1: "Erforderliche Berufserfahrung",
+        question2: "Erforderliche Ausbildung und Qualifikationen",
+        question3: "Technische Fähigkeiten",
+        question4: "Soft Skills",
+        question5: "Branchenerfahrung",
+        question6: "Sprachkenntnisse",
+        question7: "Arbeitszeit und Flexibilität",
+        question8: "Reisebereitschaft und Standort",
+        question9: "Karriereentwicklung und Weiterbildungsangebote",
+        question10: "Vergütung und Zusatzleistungen"
+      };
+  
+      // Vergleiche die Antworten mit den entsprechenden Kategorien in "Bewertung"
+      Object.keys(questions).forEach((key) => {
+        const questionKey = questions[key];
+        if (Bewertung[questionKey] === (answers[key] || 0)) {
           matchCount += 1;
         }
       });
-
+  
       const percentage = (matchCount / totalQuestions) * 100;
-      return { job: job.title, percentage: percentage.toFixed(2), url: job.url, additionalInfo: job.additionalInfo }; // Füge die zusätzlichen Informationen hinzu
+      return { job: job.title, percentage: percentage.toFixed(2), url: job.link, description: job.description };
     });
-
+  
     jobScores.sort((a, b) => b.percentage - a.percentage);
     return jobScores.slice(0, 4);
   };
@@ -159,7 +175,7 @@ const JobFinder = () => {
       <p>{selectedJob.additionalInfo}</p> {/* Zusätzliche Informationen anzeigen */}
       <p>
         <Button kind="secondary" size="sm" onClick={handleCloseDetails}>Schließen</Button>
-        <Button kind="primary" size="sm" onClick={() => window.open(selectedJob.url, '_blank')}>Jetzt bewerben</Button>
+        <Button kind="primary" size="sm" onClick={() => window.open(selectedJob.link, '_blank')}>Jetzt bewerben</Button>
       </p>
     </div>
   );

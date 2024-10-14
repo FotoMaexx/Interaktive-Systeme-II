@@ -2,3 +2,4 @@
 *.pptx
 .DS_Store
 job-crawler/backend/error_screenshot.png
+*.zip

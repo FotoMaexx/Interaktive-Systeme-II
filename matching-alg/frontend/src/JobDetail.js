@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import jobData from './jobsTest.json'; // Pfad zur JSON-Datei anpassen
+import jobData from './jobs.json'; // Pfad zur JSON-Datei anpassen
 
 const JobDetail = () => {
   const { jobTitle } = useParams(); // Nimmt den Jobtitel aus der URL
@@ -19,7 +19,7 @@ const JobDetail = () => {
       <h2>{job.title}</h2>
       <p>{job.description}</p>
       <ul>
-        {Object.entries(job.requirements).map(([key, value], index) => (
+        {Object.entries(job.Bewertung).map(([key, value], index) => (
           <li key={index}>
             <strong>{key}:</strong> {value}
           </li>
