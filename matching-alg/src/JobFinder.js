@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button, Theme, Heading, Form } from '@carbon/react';
 import '@carbon/styles/css/styles.css';
 import jobData from './jobsTest.json'; // Pfad zur JSON-Datei anpassen
+//import jobData from './jobs.json'; // Pfad zur JSON-Datei anpassen
+
 
 const JobFinder = () => {
   const totalQuestions = 10;
@@ -153,7 +155,7 @@ const JobFinder = () => {
       <Heading as="h4" style={{ fontSize: '1.5rem', marginBottom: '10px' }}>
         {selectedJob.job}
       </Heading>
-      <p>Übereinstimmung: {selectedJob.percentage}%</p>
+      <p>Dieser Job passt zu {selectedJob.percentage}% zu dir</p>
       <p>{selectedJob.additionalInfo}</p> {/* Zusätzliche Informationen anzeigen */}
       <p>
         <Button kind="secondary" size="sm" onClick={handleCloseDetails}>Schließen</Button>
@@ -218,7 +220,7 @@ const JobFinder = () => {
                         results.map((job, index) => (
                           <div key={index} style={{ marginBottom: '10px', padding: '10px', border: '1px solid #ddd', borderRadius: '5px' }}>
                             <p style={{ fontSize: '1.5rem', margin: '0' }}>{job.job}</p>
-                            <p>Übereinstimmung: {job.percentage}%</p>
+                            <p>Dieser Job passt zu  {job.percentage}% zu dir</p>
                             <Button kind="tertiary" size="sm" onClick={() => handleJobClick(job)}>Mehr Informationen</Button>
                           </div>
                         ))
@@ -243,8 +245,6 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
-
-
 
 
 
