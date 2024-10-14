@@ -41,8 +41,14 @@ app.post('/api/jobs', async (req, res) => {
       default:
         return res.status(400).send('Unsupported system type');
     }
-    console.log(`Crawled data: ${JSON.stringify(jobs, null, 2)}`);
-    res.json(jobs);
+
+    // Verpacke die Jobs in ein Objekt mit der Eigenschaft 'jobs'
+    const formattedJobs = {
+      jobs: jobs
+    };
+
+    console.log(`Crawled data: ${JSON.stringify(formattedJobs, null, 2)}`);
+    res.json(formattedJobs);
   } catch (error) {
     console.error(`Error during crawling: ${error.message}`);
     res.status(500).send('Fehler beim Abrufen der Job-Listings');
