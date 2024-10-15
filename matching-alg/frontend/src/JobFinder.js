@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Theme, Heading, Form } from '@carbon/react';
 import '@carbon/styles/css/styles.css';
+import jobData from './jobs.json'; // Pfad zur JSON-Datei anpassen
 
 const JobFinder = () => {
   const totalQuestions = 10;
