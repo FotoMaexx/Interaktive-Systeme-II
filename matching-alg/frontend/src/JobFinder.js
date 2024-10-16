@@ -14,10 +14,24 @@ const JobFinder = () => {
   const [maxScore, setMaxScore] = useState(0);
   const [selectedJob, setSelectedJob] = useState(null);
   const [view, setView] = useState('questions'); 
+  const [weights, setWeights] = useState({}); // Dynamische Gewichtungen
 
-  // Jobdaten aus dem Backend laden
+  // CI-Daten und Jobdaten aus dem Backend laden
   useEffect(() => {
-    fetch('http://localhost:5001/api/ci/jobs')  // API-Endpunkt
+    // Gewichtungen aus den CI-Daten laden
+    fetch('http://localhost:5002/api/ci')
+      .then(response => response.json())
+      .then(data => {
+        if (data.corporateIdentity && data.corporateIdentity.weights) {
+          setWeights(data.corporateIdentity.weights);
+        } else {
+          console.error('Keine Gewichtungen in den CI-Daten gefunden.');
+        }
+      })
+      .catch(error => console.error('Fehler beim Laden der CI-Daten:', error));
+
+    // Jobdaten laden
+    fetch('http://localhost:5002/api/ci/jobs')  // API-Endpunkt
       .then(response => response.json())
       .then(data => {
         if (data.jobs) {
@@ -113,14 +127,6 @@ const JobFinder = () => {
         question10: "Vergütung und Zusatzleistungen"
       };
 
-      // Definiere Gewichtungen (optional, abhängig vom Nutzer)
-      const weights = {
-        "Erforderliche Berufserfahrung": 1.5,
-        "Technische Fähigkeiten": 1.2,
-        "Vergütung und Zusatzleistungen": 1.0,
-        // ... weitere Gewichtungen
-      };
-
       // Berechne den Match-Score
       Object.keys(questions).forEach((key) => {
         const questionKey = questions[key];
@@ -130,7 +136,7 @@ const JobFinder = () => {
         const difference = Math.abs(jobValue - (userValue * 2)); // Nutzerantwort auf Job-Skala bringen
         const score = ((maxDifference - difference) / maxDifference) * 100;
 
-        const weight = weights[questionKey] || 1.0; // Standardgewichtung ist 1
+        const weight = weights[questionKey] || 1.0; // Verwende dynamische Gewichtung oder Standardgewichtung
         weightedMatchCount += score * weight;
         totalWeight += weight;
       });

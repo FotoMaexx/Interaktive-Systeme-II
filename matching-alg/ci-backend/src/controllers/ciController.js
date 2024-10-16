@@ -10,7 +10,28 @@ exports.getCI = (req, res) => {
       console.error('Fehler beim Lesen der CI-Daten:', err);
       return res.status(500).send('Fehler beim Abrufen der CI-Daten.');
     }
-    res.json(JSON.parse(data));
+    try {
+      const parsedData = JSON.parse(data);
+      if (!parsedData.weights) {
+        // Füge Gewichtungen hinzu, falls sie fehlen
+        parsedData.weights = {
+          "Erforderliche Berufserfahrung": 1.0,
+          "Erforderliche Ausbildung und Qualifikationen": 1.0,
+          "Technische Fähigkeiten": 1.0,
+          "Soft Skills": 1.0,
+          "Branchenerfahrung": 1.0,
+          "Sprachkenntnisse": 1.0,
+          "Arbeitszeit und Flexibilität": 1.0,
+          "Reisebereitschaft und Standort": 1.0,
+          "Karriereentwicklung und Weiterbildungsangebote": 1.0,
+          "Vergütung und Zusatzleistungen": 1.0
+        };
+      }
+      res.json(parsedData);
+    } catch (parseError) {
+      console.error('Fehler beim Parsen der CI-Daten:', parseError);
+      return res.status(500).send('Fehler beim Parsen der CI-Daten.');
+    }
   });
 };
 

@@ -13,7 +13,19 @@ function App() {
   const [ciData, setCiData] = useState({
     primaryColor: '#fff',
     secondaryColor: '#000',
-    logoPath: '/uploads/default-logo.png'
+    logoPath: '/uploads/default-logo.png',
+    weights: {
+      "Erforderliche Berufserfahrung": 1.0,
+      "Erforderliche Ausbildung und Qualifikationen": 1.0,
+      "Technische Fähigkeiten": 1.0,
+      "Soft Skills": 1.0,
+      "Branchenerfahrung": 1.0,
+      "Sprachkenntnisse": 1.0,
+      "Arbeitszeit und Flexibilität": 1.0,
+      "Reisebereitschaft und Standort": 1.0,
+      "Karriereentwicklung und Weiterbildungsangebote": 1.0,
+      "Vergütung und Zusatzleistungen": 1.0
+    }
   });
   const [logo, setLogo] = useState(null);
   const [jobJsonFile, setJobJsonFile] = useState(null); // Variable für Jobdaten-JSON-Datei
@@ -22,7 +34,7 @@ function App() {
 
   // Fetch current CI data from the backend
   useEffect(() => {
-    fetch('http://localhost:5001/api/ci')
+    fetch('http://localhost:5002/api/ci')
       .then((response) => {
         // Überprüfe den Status der Antwort
         if (!response.ok) {
@@ -46,11 +58,10 @@ function App() {
       .catch((error) => console.error('Fehler beim Abrufen der CI-Daten:', error));
   }, []);
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    fetch('http://localhost:5001/api/ci', {
+    fetch('http://localhost:5002/api/ci', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -78,16 +89,16 @@ function App() {
     const formData = new FormData();
     formData.append('logo', logo);
 
-    fetch('http://localhost:5001/api/ci/upload-jobs', {
+    fetch('http://localhost:5002/api/ci/upload-logo', {
       method: 'POST',
       body: formData
     })
       .then(response => response.json())
       .then(data => {
-        alert('Logo uploaded successfully!');
+        alert('Logo erfolgreich hochgeladen!');
         setCiData(prevState => ({ ...prevState, logoPath: data.logoPath }));
       })
-      .catch(error => console.error('Error uploading logo:', error));
+      .catch(error => console.error('Fehler beim Hochladen des Logos:', error));
   };
 
   // Neuer Upload für die Jobdaten
@@ -96,7 +107,7 @@ function App() {
     const formData = new FormData();
     formData.append('jsonFile', jobJsonFile); // Jobdaten-JSON-Datei anhängen
 
-    fetch('http://localhost:5001/api/ci/upload-jobs', {  // Der API-Endpunkt für das Hochladen der Jobdaten
+    fetch('http://localhost:5002/api/ci/upload-jobs', {  // Der API-Endpunkt für das Hochladen der Jobdaten
       method: 'POST',
       body: formData
     })
@@ -104,7 +115,17 @@ function App() {
       .then(data => {
         alert('Jobdaten erfolgreich hochgeladen!');
       })
-      .catch(error => console.error('Error uploading Job JSON:', error));
+      .catch(error => console.error('Fehler beim Hochladen der Jobdaten:', error));
+  };
+
+  const handleWeightChange = (key, value) => {
+    setCiData(prevState => ({
+      ...prevState,
+      weights: {
+        ...prevState.weights,
+        [key]: value,
+      },
+    }));
   };
 
   return (
@@ -160,6 +181,20 @@ function App() {
               </div>
             )}
           </div>
+
+          {/* Gewichtungen bearbeiten */}
+          <Heading as="h3" style={{ marginBottom: '20px' }}>Gewichtungen anpassen</Heading>
+          {ciData.weights && Object.keys(ciData.weights).map((key) => (
+            <div key={key} style={{ marginBottom: '10px' }}>
+              <label>{key}</label>
+              <input
+                type="number"
+                value={ciData.weights[key]}
+                onChange={(e) => handleWeightChange(key, parseFloat(e.target.value))}
+                style={{ marginLeft: '10px', width: '60px' }}
+              />
+            </div>
+          ))}
           <Button type="submit">Update CI</Button>
         </Form>
 
