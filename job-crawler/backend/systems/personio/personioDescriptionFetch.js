@@ -9,7 +9,6 @@ export async function fetchAndExtendDescription(job) {
 
     try {
         console.log(`Rufe Seite auf: ${job.link}`);
-        
         await page.goto(job.link, { waitUntil: 'networkidle2' });
 
         // Warten, um sicherzustellen, dass alle Inhalte geladen sind
@@ -42,11 +41,11 @@ export async function fetchAndExtendDescription(job) {
                 const regex = new RegExp(section + '.*?(?=(Ihre Aufgaben|Ihr Profil|Ihre Vorteile|$))', 's');
                 const match = text.match(regex);
                 if (match && match[0]) {
-                    relevantText += match[0].trim() + '\n\n';
+                    relevantText += match[0].normalize("NFKD").replace(/[\u00A0\u00AD\u200B-\u200D\uFEFF]/g, '').trim() + '\n\n';
                 }
             });
 
-            return relevantText.trim();
+            return relevantText.normalize("NFKD").replace(/[\u00A0\u00AD\u200B-\u200D\uFEFF]/g, '').trim();
         });
 
         if (jobDescription) {
