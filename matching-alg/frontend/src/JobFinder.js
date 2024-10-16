@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Theme, Heading, Form } from '@carbon/react';
 import '@carbon/styles/css/styles.css';
-import jobData from './jobs.json'; // Pfad zur JSON-Datei anpassen
 
 const JobFinder = () => {
   const totalQuestions = 10;
@@ -21,9 +20,11 @@ const JobFinder = () => {
     fetch('http://localhost:5001/api/ci/jobs')  // API-Endpunkt
       .then(response => response.json())
       .then(data => {
-        if (data && data.length > 0) {  // Überprüfung auf gültige Daten
-          setJobBewertung(data);  // Jobdaten speichern
-          const max = data.reduce((acc, job) => {
+        if (data.jobs) {
+          setJobBewertung(data.jobs);  // Jobdaten im State speichern
+
+          // Berechnung des maximalen Scores für die Jobs
+          const max = data.jobs.reduce((acc, job) => {
             const jobMax = Object.values(job.Bewertung).reduce((sum, value) => sum + value, 0);
             return Math.max(acc, jobMax);
           }, 0);
@@ -92,12 +93,13 @@ const JobFinder = () => {
   const calculateResults = () => {
     if (!jobBewertung.length) return [];
 
+    const maxDifference = 10; // Unterschiedliche Bewertungsskala (1-10)
+
     const jobScores = jobBewertung.map(job => {
       const Bewertung = job.Bewertung;
-      let matchCount = 0;
-      const totalQuestions = Object.keys(Bewertung).length;
+      let weightedMatchCount = 0;
+      let totalWeight = 0;
 
-      // Definiere die Fragen und deren Zuordnung zur Bewertung
       const questions = {
         question1: "Erforderliche Berufserfahrung",
         question2: "Erforderliche Ausbildung und Qualifikationen",
@@ -111,20 +113,34 @@ const JobFinder = () => {
         question10: "Vergütung und Zusatzleistungen"
       };
 
-      // Vergleiche die Antworten mit den entsprechenden Kategorien in "Bewertung"
+      // Definiere Gewichtungen (optional, abhängig vom Nutzer)
+      const weights = {
+        "Erforderliche Berufserfahrung": 1.5,
+        "Technische Fähigkeiten": 1.2,
+        "Vergütung und Zusatzleistungen": 1.0,
+        // ... weitere Gewichtungen
+      };
+
+      // Berechne den Match-Score
       Object.keys(questions).forEach((key) => {
         const questionKey = questions[key];
-        if (Bewertung[questionKey] === (answers[key] || 0)) {
-          matchCount += 1;
-        }
+        const jobValue = Bewertung[questionKey];
+        const userValue = answers[key] || 0;
+
+        const difference = Math.abs(jobValue - (userValue * 2)); // Nutzerantwort auf Job-Skala bringen
+        const score = ((maxDifference - difference) / maxDifference) * 100;
+
+        const weight = weights[questionKey] || 1.0; // Standardgewichtung ist 1
+        weightedMatchCount += score * weight;
+        totalWeight += weight;
       });
 
-      const percentage = (matchCount / totalQuestions) * 100;
-      return { job: job.title, percentage: percentage.toFixed(2), url: job.link, description: job.description };
+      const weightedPercentage = (weightedMatchCount / totalWeight).toFixed(2);
+      return { job: job.title, percentage: weightedPercentage, url: job.link, description: job.description };
     });
 
     jobScores.sort((a, b) => b.percentage - a.percentage);
-    return jobScores.slice(0, 4);  // Zeige die Top 4 Ergebnisse
+    return jobScores.slice(0, 4); // Zeige die Top 4 Ergebnisse
   };
 
   const handleJobClick = (job) => {
@@ -270,4 +286,3 @@ const JobFinder = () => {
 };
 
 export default JobFinder;
-
