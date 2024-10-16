@@ -194,9 +194,9 @@ const JobFinder = () => {
           <Button kind="secondary" size="lg" onClick={handlePrev} style={{ marginRight: '20px' }}>Zurück</Button>
         )}
         {questionNumber < totalQuestions ? (
-          <Button kind="primary" size="lg" onClick={handleNext} disabled={!isAnswered}>Weiter</Button>
+          <Button kind="primary" size="lg" onClick={handleNext} disabled={!isAnswered} style={{ backgroundColor: colors.primaryColor }}>Weiter</Button>
         ) : (
-          <Button kind="primary" size="lg" onClick={handleSubmit} disabled={!isAnswered}>Ergebnisse evaluieren</Button>
+          <Button kind="primary" size="lg" onClick={handleSubmit} disabled={!isAnswered}style={{ backgroundColor: colors.primaryColor }}>Ergebnisse evaluieren</Button>
         )}
       </div>
     </div>
@@ -208,10 +208,12 @@ const JobFinder = () => {
         {selectedJob.job}
       </Heading>
       <p>Dieser Job passt zu {selectedJob.percentage}% zu dir</p>
-      <p>{selectedJob.additionalInfo}</p>
+      <br></br>
+      <p>{selectedJob.description}</p>
+      <br></br>
       <p>
-        <Button kind="secondary" size="sm" onClick={handleCloseDetails}>Schließen</Button>
-        <Button kind="primary" size="sm" onClick={() => window.open(selectedJob.link, '_blank')}>Jetzt bewerben</Button>
+        <Button kind="secondary" size="sm" onClick={handleCloseDetails}style={{ marginRight: '20px' }}>Schließen</Button>
+        <Button kind="primary" size="sm" onClick={() => window.open(selectedJob.link, '_blank')}style={{ backgroundColor: colors.primaryColor }}>Jetzt bewerben</Button>
       </p>
     </div>
   );
@@ -237,7 +239,7 @@ const JobFinder = () => {
             {!started ? (
               <div style={{ textAlign: 'center' }}>
                 <Heading as="h2" style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Finde den besten Job für dich!</Heading>
-                <Button kind="primary" size="lg" onClick={handleStart}>Starten</Button>
+                <Button kind="primary" size="lg" onClick={handleStart} style={{ backgroundColor: colors.primaryColor }}>Starten</Button>
               </div>
             ) : (
               <Form>
