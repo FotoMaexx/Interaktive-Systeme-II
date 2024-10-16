@@ -15,17 +15,24 @@ const JobFinder = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [view, setView] = useState('questions');
   const [weights, setWeights] = useState({}); // Dynamische Gewichtungen
+  const [colors, setColors] = useState({ primaryColor: '#0072c3', secondaryColor: '#f4f4f4' }); // CI Farben
 
   // CI-Daten und Jobdaten aus dem Backend laden
   useEffect(() => {
-    // Gewichtungen aus den CI-Daten laden
+    // CI-Daten laden
     fetch('http://localhost:5002/api/ci')
       .then(response => response.json())
       .then(data => {
-        if (data.corporateIdentity && data.corporateIdentity.weights) {
-          setWeights(data.corporateIdentity.weights);
-        } else {
-          console.error('Keine Gewichtungen in den CI-Daten gefunden.');
+        if (data) {
+          if (data.weights) {
+            setWeights(data.weights);
+          } else {
+            console.error('Keine Gewichtungen in den CI-Daten gefunden.');
+          }
+          setColors({
+            primaryColor: data.primaryColor || '#0072c3',
+            secondaryColor: data.secondaryColor || '#f4f4f4',
+          });
         }
       })
       .catch(error => console.error('Fehler beim Laden der CI-Daten:', error));
@@ -215,7 +222,7 @@ const JobFinder = () => {
         <header
           onClick={handleRestart}
           style={{
-            backgroundColor: 'var(--primary-color)',
+            backgroundColor: colors.primaryColor,
             color: '#fff',
             padding: '10px 20px',
             textAlign: 'center',
@@ -283,7 +290,7 @@ const JobFinder = () => {
             )}
           </div>
         </main>
-        <footer style={{ backgroundColor: '#f0f0f0', padding: '10px', textAlign: 'center' }}>
+        <footer style={{ backgroundColor: colors.secondaryColor, padding: '10px', textAlign: 'center' }}>
           <p style={{ margin: 0 }}>© 2024 Jobfinder - All rights reserved.</p>
         </footer>
       </div>
