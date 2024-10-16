@@ -188,11 +188,15 @@ function App() {
             <div key={key} style={{ marginBottom: '10px' }}>
               <label>{key}</label>
               <input
-                type="number"
+                type="range"
+                min="1"
+                max="5"
+                step="0.1"
                 value={ciData.weights[key]}
                 onChange={(e) => handleWeightChange(key, parseFloat(e.target.value))}
-                style={{ marginLeft: '10px', width: '60px' }}
+                style={{ marginLeft: '10px', width: '200px' }}
               />
+              <span style={{ marginLeft: '10px' }}>{ciData.weights[key]}</span>
             </div>
           ))}
           <Button type="submit">Update CI</Button>
