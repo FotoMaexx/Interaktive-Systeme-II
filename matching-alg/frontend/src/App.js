@@ -13,7 +13,7 @@ function App() {
 
   useEffect(() => {
     // CI-Daten vom Backend abrufen
-    fetch('http://localhost:5001/api/ci')
+    fetch('http://localhost:5002/api/ci')
       .then((response) => response.json())
       .then((data) => {
         console.log('CI-Daten:', data);  // CI-Daten loggen, um zu prüfen, was zurückkommt
@@ -33,7 +33,7 @@ function App() {
           textAlign: 'center',
         }}
       >
-        <img src={`http://localhost:5001${ciData.logoPath}`} alt="Firmenlogo" style={{ width: '150px' }} />
+        <img src={`http://localhost:5002${ciData.logoPath}`} alt="Firmenlogo" style={{ width: '150px' }} />
       </header>
 
       <Routes>
