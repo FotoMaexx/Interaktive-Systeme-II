@@ -8,7 +8,7 @@ function App() {
     primaryColor: '#3498db',
     secondaryColor: '#2ecc71',
     fontFamily: 'Arial, sans-serif',
-    logoPath: '/uploads/default-logo.png',  // Standardlogo
+    logoPath: '',  // Standard kein Logo
   });
 
   useEffect(() => {
@@ -33,7 +33,9 @@ function App() {
           textAlign: 'center',
         }}
       >
-        <img src={`http://localhost:5002${ciData.logoPath}`} alt="Firmenlogo" style={{ width: '150px' }} />
+        {ciData.logoPath && (
+          <img src={`http://localhost:5002${ciData.logoPath}`} alt="Firmenlogo" style={{ width: '150px' }} />
+        )}
       </header>
 
       <Routes>
