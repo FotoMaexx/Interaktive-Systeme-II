@@ -10,10 +10,10 @@ const JobFinder = () => {
   const [showResults, setShowResults] = useState(false);
   const [isAnswered, setIsAnswered] = useState(false);
   const [started, setStarted] = useState(false);
-  const [jobBewertung, setJobBewertung] = useState([]);  
+  const [jobBewertung, setJobBewertung] = useState([]);
   const [maxScore, setMaxScore] = useState(0);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [view, setView] = useState('questions'); 
+  const [view, setView] = useState('questions');
   const [weights, setWeights] = useState({}); // Dynamische Gewichtungen
 
   // CI-Daten und Jobdaten aus dem Backend laden
@@ -48,7 +48,7 @@ const JobFinder = () => {
         }
       })
       .catch(error => console.error('Fehler beim Laden der Jobdaten:', error));
-  }, []);  
+  }, []);
 
   // Testbeginn
   const handleStart = () => {
@@ -89,7 +89,7 @@ const JobFinder = () => {
     setResults(calculatedResults);
     setShowResults(true);
     setCurrentQuestion(totalQuestions + 1);
-    setView('results'); 
+    setView('results');
   };
 
   const handleRestart = () => {
@@ -100,7 +100,7 @@ const JobFinder = () => {
     setIsAnswered(false);
     setStarted(false);
     setSelectedJob(null);
-    setView('questions'); 
+    setView('questions');
   };
 
   // Berechnung der Übereinstimmung der Antworten mit den Jobbewertungen
@@ -151,12 +151,12 @@ const JobFinder = () => {
 
   const handleJobClick = (job) => {
     setSelectedJob(job);
-    setView('details'); 
+    setView('details');
   };
 
   const handleCloseDetails = () => {
     setSelectedJob(null);
-    setView('results'); 
+    setView('results');
   };
 
   const renderQuestion = (questionNumber, questionText) => (
@@ -182,14 +182,14 @@ const JobFinder = () => {
         ))}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '30px' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '30px' }}>
         {questionNumber > 1 && (
-          <Button kind="secondary" size="lg" onClick={handlePrev} style={{ flex: '1', marginRight: '20px' }}>Zurück</Button>
+          <Button kind="secondary" size="lg" onClick={handlePrev} style={{ marginRight: '20px' }}>Zurück</Button>
         )}
         {questionNumber < totalQuestions ? (
-          <Button kind="primary" size="lg" onClick={handleNext} style={{ flex: '1' }} disabled={!isAnswered}>Weiter</Button>
+          <Button kind="primary" size="lg" onClick={handleNext} disabled={!isAnswered}>Weiter</Button>
         ) : (
-          <Button kind="primary" size="lg" onClick={handleSubmit} style={{ flex: '1' }} disabled={!isAnswered}>Ergebnisse evaluieren</Button>
+          <Button kind="primary" size="lg" onClick={handleSubmit} disabled={!isAnswered}>Ergebnisse evaluieren</Button>
         )}
       </div>
     </div>
