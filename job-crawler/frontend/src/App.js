@@ -81,7 +81,7 @@ function App() {
                     Wähle ein System <br /><br />
                     Beispiellinks:<br />
                     Workday: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://hensoldt.wd3.myworkdayjobs.com')}>https://hensoldt.wd3.myworkdayjobs.com</a><br />
-                    SAP: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://careers.kaercher.com/')}>https://careers.kaercher.com/</a><br />
+                    SAP: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://careers.kaercher.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=&geolocation=&optionsFacetsDD_department=&optionsFacetsDD_customfield3=&optionsFacetsDD_country=')}>https://careers.kaercher.com/search/?searchby=location&createNewAlert=false&q=&locationsearch=&geolocation=&optionsFacetsDD_department=&optionsFacetsDD_customfield3=&optionsFacetsDD_country=</a><br />
                     Personio: <a href="#" style={{ color: 'blue', textDecoration: 'underline', cursor: 'pointer' }} onClick={() => handleLinkClick('https://liqui-moly-gmbh.jobs.personio.com')}>https://liqui-moly-gmbh.jobs.personio.com</a>
                   </>
                 }
