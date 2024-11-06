@@ -1,5 +1,17 @@
 {
-  "primaryColor": "#bd1212",
-  "secondaryColor": "#2ecc71",
-  "logoPath": "/uploads/default-logo.png"
+  "primaryColor": "#268e56",
+  "secondaryColor": "#284c37",
+  "logoPath": "",
+  "weights": {
+    "Erforderliche Berufserfahrung": 2.5,
+    "Erforderliche Ausbildung und Qualifikationen": 2.1,
+    "Technische Fähigkeiten": 2.8,
+    "Soft Skills": 2.6,
+    "Branchenerfahrung": 2.5,
+    "Sprachkenntnisse": 3.3,
+    "Arbeitszeit und Flexibilität": 3.9,
+    "Reisebereitschaft und Standort": 3.1,
+    "Karriereentwicklung und Weiterbildungsangebote": 3.2,
+    "Vergütung und Zusatzleistungen": 3.2
+  }
 }
